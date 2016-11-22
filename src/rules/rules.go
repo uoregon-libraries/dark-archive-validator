@@ -17,11 +17,12 @@ type Failure struct {
 // Engine is the rules runner
 type Engine struct {
 	Validators []Validator
+	TraverseFn func(string, filepath.WalkFunc) error
 }
 
 // NewEngine returns an engine with the one required rule we have
 func NewEngine() *Engine {
-	var e = &Engine{}
+	var e = &Engine{TraverseFn: filepath.Walk}
 	e.AddValidator("valid-windows-filename", ValidWindowsFilename)
 	return e
 }
@@ -35,7 +36,7 @@ func (e *Engine) AddValidator(name string, v ValidatorFunc) {
 // registered validators, yielding to failFunc whenever a validation against a
 // file returns any errors
 func (e *Engine) ValidateTree(root string, failFunc func(string, []Failure)) {
-	filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+	e.TraverseFn(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			log.Fatalf("CRITICAL - Unable to process %#v: %s", path, err)
 		}
