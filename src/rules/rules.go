@@ -1,6 +1,7 @@
 package rules
 
 import (
+	"log"
 	"os"
 	"path/filepath"
 )
@@ -34,6 +35,10 @@ func (e *Engine) AddValidator(name string, v ValidatorFunc) {
 // file returns any errors
 func (e *Engine) ValidateTree(root string, failFunc func(string, []Failure)) {
 	filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			log.Fatalf("CRITICAL - Unable to process %#v: %s", path, err)
+		}
+
 		var fl = e.Validate(path, info)
 		if len(fl) > 0 {
 			failFunc(path, fl)
