@@ -1,0 +1,5 @@
+# GB cache
+/pkg
+
+# GB vendored packages
+/vendor/src
