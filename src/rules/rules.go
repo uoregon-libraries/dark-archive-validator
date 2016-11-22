@@ -12,27 +12,6 @@ type Failure struct {
 	E error
 }
 
-// FailureList acts as a proxy into a slice of failures to allow for "magic"
-// append capabilities
-type FailureList struct {
-	list []Failure
-}
-
-// AppendIfError adds a Failure to the list if v returns an error when run
-// against info
-func (fl FailureList) AppendIfError(v Validator, path string, info os.FileInfo) {
-	var err = v.Validate(path, info)
-	if err != nil {
-		fl.list = append(fl.list, Failure{v, err})
-	}
-}
-
-// Any returns true if the failure list has any elements, which only happens
-// when AppendIfError finds an error from a validator
-func (fl FailureList) Any() bool {
-	return len(fl.list) > 0
-}
-
 // Engine is the rules runner
 type Engine struct {
 	Validators []Validator
@@ -53,10 +32,10 @@ func (e *Engine) AddValidator(name string, v ValidatorFunc) {
 // ValidateTree walks all files under root, sending everything found to all
 // registered validators, yielding to failFunc whenever a validation against a
 // file returns any errors
-func (e *Engine) ValidateTree(root string, failFunc func(string, FailureList)) {
+func (e *Engine) ValidateTree(root string, failFunc func(string, []Failure)) {
 	filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		var fl = e.Validate(path, info)
-		if fl.Any() {
+		if len(fl) > 0 {
 			failFunc(path, fl)
 		}
 		return nil
@@ -65,11 +44,14 @@ func (e *Engine) ValidateTree(root string, failFunc func(string, FailureList)) {
 
 // Validate checks the given full path against all validators, returning an
 // array of errors found
-func (e *Engine) Validate(path string, info os.FileInfo) FailureList {
-	var flist FailureList
+func (e *Engine) Validate(path string, info os.FileInfo) []Failure {
+	var flist []Failure
 
 	for _, v := range e.Validators {
-		flist.AppendIfError(v, path, info)
+		var err = v.Validate(path, info)
+		if err != nil {
+			flist = append(flist, Failure{v, err})
+		}
 	}
 
 	return flist
