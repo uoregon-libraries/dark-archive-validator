@@ -22,7 +22,7 @@ func fakeFileWalk(root string, walkfn filepath.WalkFunc) error {
 	// Perfectly good file within the good dir
 	walk("stuff/", rules.NewFakeFile("goodfile2.txt", 1024))
 	// Symlink - we'll be excluding these
-	walk("", rules.NewFakeSymlink("symlink"))
+	walk("", rules.NewFakeSymlink("flarb"))
 	// Windows reserved filename, even though it's got an extension
 	walk("", rules.NewFakeDir("lPt2.dir"))
 	// Good file even though the dir is bad
@@ -48,9 +48,13 @@ func failFunc(path string, failures []rules.Failure) {
 func ExampleEngine() {
 	var e = rules.NewEngine()
 	e.TraverseFn = fakeFileWalk
+	e.AddValidator("no-special-files", rules.NoSpecialFiles)
+
 	e.ValidateTree("/this/path/shouldn't/actually/have/any/kind/of/testing/so I can do *all kinds* of bad things in here!\x1b\x1b/", failFunc)
 
 	// Output:
+	// no-special-files says "flarb" is a symbolic link
 	// valid-windows-filename says "lPt2.dir" uses a reserved file name
 	// valid-windows-filename says "blahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters (:, ", *)
+	// no-special-files says "blahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" is a device file
 }
