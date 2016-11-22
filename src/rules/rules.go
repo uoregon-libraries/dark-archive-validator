@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // Failure keeps a validator and the error returned in one place for easy
@@ -39,9 +40,10 @@ func (e *Engine) ValidateTree(root string, failFunc func(string, []Failure)) {
 			log.Fatalf("CRITICAL - Unable to process %#v: %s", path, err)
 		}
 
-		var fl = e.Validate(path, info)
+		var basepath = strings.Replace(path, root, "", -1)
+		var fl = e.Validate(basepath, info)
 		if len(fl) > 0 {
-			failFunc(path, fl)
+			failFunc(basepath, fl)
 		}
 		return nil
 	})
