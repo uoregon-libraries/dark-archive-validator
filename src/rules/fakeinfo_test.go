@@ -14,6 +14,22 @@ type FakeInfo struct {
 	isDir bool
 }
 
+func NewFakeFile(n string, s int64) FakeInfo {
+	return FakeInfo{name: n, size: s}
+}
+
+func NewFakeDir(n string) FakeInfo {
+	return FakeInfo{name: n, isDir: true}
+}
+
+func NewFakeSymlink(n string) FakeInfo {
+	return FakeInfo{name: n, mode: os.ModeSymlink}
+}
+
+func NewFakeDevice(n string) FakeInfo {
+	return FakeInfo{name: n, mode: os.ModeDevice}
+}
+
 func (fi FakeInfo) Name() string {
 	return fi.name
 }
