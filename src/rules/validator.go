@@ -15,7 +15,7 @@ type Validator struct {
 	vf   ValidatorFunc
 }
 
-// Run simply delegates the filename into the validator function
-func (v Validator) Run(path string, info os.FileInfo) error {
+// Validate simply delegates the filename into the validator function
+func (v Validator) Validate(path string, info os.FileInfo) error {
 	return v.vf(path, info)
 }

@@ -21,7 +21,7 @@ type FailureList struct {
 // AppendIfError adds a Failure to the list if v returns an error when run
 // against info
 func (fl FailureList) AppendIfError(v Validator, path string, info os.FileInfo) {
-	var err = v.Run(path, info)
+	var err = v.Validate(path, info)
 	if err != nil {
 		fl.list = append(fl.list, Failure{v, err})
 	}
