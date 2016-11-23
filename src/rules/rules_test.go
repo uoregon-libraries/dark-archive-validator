@@ -27,6 +27,8 @@ func fakeFileWalk(root string, walkfn filepath.WalkFunc) error {
 	walk("", rules.NewFakeDir("lPt2.dir"))
 	// Good file even though the dir is bad
 	walk("lPt2.dir", rules.NewFakeFile("file.txt", 1024))
+	// Good file even though the dir is *really* bad
+	walk("foo: \x05bar*baz.dir", rules.NewFakeFile("file.txt", 1024))
 	// Duped filename; case insensitivity will be important
 	walk("lPt2.dir", rules.NewFakeFile("fILe.txt", 2048))
 	// Zero-length files are bad, mmkay?
