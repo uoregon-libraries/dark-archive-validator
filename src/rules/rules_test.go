@@ -33,6 +33,14 @@ func fakeFileWalk(root string, walkfn filepath.WalkFunc) error {
 	walk("lPt2.dir", rules.NewFakeFile("fILe.txt", 2048))
 	// Zero-length files are bad, mmkay?
 	walk("lPt2.dir", rules.NewFakeFile("zerofile.txt", 0))
+	// File with space
+	walk("", rules.NewFakeFile("this isbad.txt", 1024))
+	// File with space at the end
+	walk("", rules.NewFakeFile("thisisbad.txt ", 1024))
+	// File with wonky space
+	walk("", rules.NewFakeFile("this\u202fisbad.txt", 1024))
+	// File with wonky space at the end
+	walk("", rules.NewFakeFile("thisisbad.txt\u202f", 1024))
 
 	// Multiple problems: bad characters for windows, bad characters for our own
 	// sanity, too long a path, device file
@@ -51,12 +59,18 @@ func ExampleEngine() {
 	var e = rules.NewEngine()
 	e.TraverseFn = fakeFileWalk
 	e.AddValidator("no-special-files", rules.NoSpecialFiles)
+	e.AddValidator("no-spaces", rules.NoSpaces)
 
 	e.ValidateTree("/this/path/shouldn't/actually/have/any/kind/of/testing/so I can do *all kinds* of bad things in here!\x1b\x1b/", failFunc)
 
 	// Output:
 	// no-special-files says "flarb" is a symbolic link
 	// valid-windows-filename says "lPt2.dir" uses a reserved file name
+	// no-spaces says "this isbad.txt" has a space in the filename
+	// valid-windows-filename says "thisisbad.txt " has a trailing space
+	// no-spaces says "thisisbad.txt " ends with a space
+	// no-spaces says "this\u202fisbad.txt" has a space in the filename
+	// no-spaces says "thisisbad.txt\u202f" ends with a space
 	// valid-windows-filename says "blahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters (:, ", *)
 	// no-special-files says "blahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" is a device file
 }
