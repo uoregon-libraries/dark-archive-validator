@@ -43,6 +43,8 @@ func fakeFileWalk(root string, walkfn filepath.WalkFunc) error {
 	walk("", rules.NewFakeFile("thisisbad.txt\u202f", 1024))
 	// File that doesn't start with an alpha character
 	walk("", rules.NewFakeFile("0.txt", 1024))
+	// File that violates DSC conventions
+	walk("", rules.NewFakeFile("abc@foo.bar", 1024))
 
 	// Multiple problems: bad characters for windows, bad characters for our own
 	// sanity, too long a path, device file
@@ -65,6 +67,7 @@ func ExampleEngine() {
 	e.AddValidator("path-limit", rules.PathLimitFn(50))
 	e.AddValidator("starts-with-alpha", rules.StartsWithAlpha)
 	e.AddValidator("nonzero-filesize", rules.NonzeroFilesize)
+	e.AddValidator("valid-dsc-filename", rules.ValidDSCFilename)
 
 	e.ValidateTree("/this/path/shouldn't/actually/have/any/kind/of/testing/so I can do *all kinds* of bad things in here!\x1b\x1b/", failFunc)
 
@@ -78,7 +81,9 @@ func ExampleEngine() {
 	// no-spaces says "this\u202fisbad.txt" has a space in the filename
 	// no-spaces says "thisisbad.txt\u202f" ends with a space
 	// starts-with-alpha says "0.txt" starts with a non-alphabetic character
+	// valid-dsc-filename says "abc@foo.bar" contains invalid characters (@)
 	// valid-windows-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters (:, ", *)
 	// no-special-files says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" is a device file
 	// path-limit says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" exceeds the maximum path length of 50 characters
+	// valid-dsc-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters (*)
 }
