@@ -19,7 +19,7 @@ func NewFakeFile(n string, s int64) FakeInfo {
 }
 
 func NewFakeDir(n string) FakeInfo {
-	return FakeInfo{name: n, isDir: true}
+	return FakeInfo{name: n, isDir: true, mode: os.ModeDir}
 }
 
 func NewFakeSymlink(n string) FakeInfo {
