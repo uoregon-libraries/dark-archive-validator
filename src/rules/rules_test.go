@@ -64,12 +64,14 @@ func ExampleEngine() {
 	e.AddValidator("no-spaces", rules.NoSpaces)
 	e.AddValidator("path-limit", rules.PathLimitFn(50))
 	e.AddValidator("starts-with-alpha", rules.StartsWithAlpha)
+	e.AddValidator("nonzero-filesize", rules.NonzeroFilesize)
 
 	e.ValidateTree("/this/path/shouldn't/actually/have/any/kind/of/testing/so I can do *all kinds* of bad things in here!\x1b\x1b/", failFunc)
 
 	// Output:
 	// no-special-files says "flarb" is a symbolic link
 	// valid-windows-filename says "lPt2.dir" uses a reserved file name
+	// nonzero-filesize says "lPt2.dir/zerofile.txt" is an empty file
 	// no-spaces says "this isbad.txt" has a space in the filename
 	// valid-windows-filename says "thisisbad.txt " has a trailing space
 	// no-spaces says "thisisbad.txt " ends with a space
