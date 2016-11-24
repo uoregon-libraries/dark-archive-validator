@@ -41,8 +41,8 @@ func fakeFileWalk(root string, walkfn filepath.WalkFunc) error {
 	walk("", rules.NewFakeFile("this\u202fisbad.txt", 1024))
 	// File with wonky space at the end
 	walk("", rules.NewFakeFile("thisisbad.txt\u202f", 1024))
-	// File thta doesn't start with an alpha character
-	walk("", rules.NewFakeFile("0.txt", 1025))
+	// File that doesn't start with an alpha character
+	walk("", rules.NewFakeFile("0.txt", 1024))
 
 	// Multiple problems: bad characters for windows, bad characters for our own
 	// sanity, too long a path, device file
