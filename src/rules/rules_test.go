@@ -41,6 +41,8 @@ func fakeFileWalk(root string, walkfn filepath.WalkFunc) error {
 	walk("", rules.NewFakeFile("this\u202fisbad.txt", 1024))
 	// File with wonky space at the end
 	walk("", rules.NewFakeFile("thisisbad.txt\u202f", 1024))
+	// File thta doesn't start with an alpha character
+	walk("", rules.NewFakeFile("0.txt", 1025))
 
 	// Multiple problems: bad characters for windows, bad characters for our own
 	// sanity, too long a path, device file
@@ -61,6 +63,7 @@ func ExampleEngine() {
 	e.AddValidator("no-special-files", rules.NoSpecialFiles)
 	e.AddValidator("no-spaces", rules.NoSpaces)
 	e.AddValidator("path-limit", rules.PathLimitFn(50))
+	e.AddValidator("starts-with-alpha", rules.StartsWithAlpha)
 
 	e.ValidateTree("/this/path/shouldn't/actually/have/any/kind/of/testing/so I can do *all kinds* of bad things in here!\x1b\x1b/", failFunc)
 
@@ -72,6 +75,7 @@ func ExampleEngine() {
 	// no-spaces says "thisisbad.txt " ends with a space
 	// no-spaces says "this\u202fisbad.txt" has a space in the filename
 	// no-spaces says "thisisbad.txt\u202f" ends with a space
+	// starts-with-alpha says "0.txt" starts with a non-alphabetic character
 	// valid-windows-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters (:, ", *)
 	// no-special-files says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" is a device file
 	// path-limit says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" exceeds the maximum path length of 50 characters
