@@ -30,11 +30,14 @@ func NewEngine() *Engine {
 // Skip looks up the given validator by name and, if it exists, adds it to this
 // engine's validator skip list
 func (e *Engine) Skip(name string) (ok bool) {
-	_, ok = validatorLookup[name]
-	if ok {
-		e.skip[name] = ok
+	for _, v := range validators {
+		if v.Name == name {
+			e.skip[name] = true
+			return true
+		}
 	}
-	return
+
+	return false
 }
 
 // ValidateTree walks all files under root, sending everything found to all
@@ -55,19 +58,20 @@ func (e *Engine) ValidateTree(root string, failFunc func(string, []Failure)) {
 	})
 }
 
-// ValidatorNames returns a sorted list of all validator names which are not
-// explicitly skipped.  We sort in order to ensure consistent reporting.
-func (e *Engine) ValidatorNames() []string {
-	var validatorNames []string
+// Validators returns a sorted list of all validators which are not explicitly
+// skipped.  We sort by priority and then name in order to allow
+// priority/skip-on-fail to make sense, and to ensure consistent reporting.
+func (e *Engine) Validators() ValidatorList {
+	var vList ValidatorList
 	var v Validator
-	for _, v = range validatorLookup {
+	for _, v = range validators {
 		if e.skip[v.Name] {
 			continue
 		}
-		validatorNames = append(validatorNames, v.Name)
+		vList = append(vList, v)
 	}
-	sort.Strings(validatorNames)
-	return validatorNames
+	sort.Sort(vList)
+	return vList
 }
 
 // Validate checks the given full path against all validators not in the skip
@@ -75,13 +79,9 @@ func (e *Engine) ValidatorNames() []string {
 func (e *Engine) Validate(path string, info os.FileInfo) []Failure {
 	var flist []Failure
 
-	var name string
-	for _, name = range e.ValidatorNames() {
-		var v = validatorLookup[name]
-		var err = v.Validate(path, info)
-		if err != nil {
-			flist = append(flist, Failure{v, err})
-		}
+	var v Validator
+	for _, v = range e.Validators() {
+		flist = v.Validate(path, info, flist)
 	}
 
 	return flist
