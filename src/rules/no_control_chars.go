@@ -5,6 +5,10 @@ import (
 	"os"
 )
 
+func init() {
+	RegisterValidator("no-control-chars", NoControlChars)
+}
+
 // NoControlChars rejects files that use anything below ASCII space, or the
 // delete code (0-31, 127)
 func NoControlChars(path string, info os.FileInfo) error {

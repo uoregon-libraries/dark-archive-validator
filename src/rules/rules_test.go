@@ -62,13 +62,9 @@ func failFunc(path string, failures []rules.Failure) {
 func ExampleEngine() {
 	var e = rules.NewEngine()
 	e.TraverseFn = fakeFileWalk
-	e.AddValidator("no-special-files", rules.NoSpecialFiles)
-	e.AddValidator("no-spaces", rules.NoSpaces)
-	e.AddValidator("path-limit", rules.PathLimitFn(50))
-	e.AddValidator("starts-with-alpha", rules.StartsWithAlpha)
-	e.AddValidator("nonzero-filesize", rules.NonzeroFilesize)
-	e.AddValidator("valid-dsc-filename", rules.ValidDSCFilename)
-	e.AddValidator("no-control-chars", rules.NoControlChars)
+
+	// For testing, we have to register a shorter path-limit validation
+	rules.RegisterValidator("path-limit", rules.PathLimitFn(50))
 
 	e.ValidateTree("/this/path/shouldn't/actually/have/any/kind/of/testing/so I can do *all kinds* of bad things in here!\x1b\x1b/", failFunc)
 
@@ -77,15 +73,15 @@ func ExampleEngine() {
 	// valid-windows-filename says "lPt2.dir" uses a reserved file name
 	// nonzero-filesize says "lPt2.dir/zerofile.txt" is an empty file
 	// no-spaces says "this isbad.txt" has a space in the filename
-	// valid-windows-filename says "thisisbad.txt " has a trailing space
 	// no-spaces says "thisisbad.txt " ends with a space
+	// valid-windows-filename says "thisisbad.txt " has a trailing space
 	// no-spaces says "this\u202fisbad.txt" has a space in the filename
 	// no-spaces says "thisisbad.txt\u202f" ends with a space
 	// starts-with-alpha says "0.txt" starts with a non-alphabetic character
 	// valid-dsc-filename says "abc@foo.bar" contains invalid characters (@)
-	// valid-windows-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters (:, ", *)
+	// no-control-chars says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains one or more control characters
 	// no-special-files says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" is a device file
 	// path-limit says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" exceeds the maximum path length of 50 characters
 	// valid-dsc-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters (*)
-	// no-control-chars says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains one or more control characters
+	// valid-windows-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters (:, ", *)
 }

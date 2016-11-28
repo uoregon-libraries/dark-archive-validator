@@ -5,6 +5,10 @@ import (
 	"os"
 )
 
+func init() {
+	RegisterValidator("starts-with-alpha", StartsWithAlpha)
+}
+
 // StartsWithAlpha enforces that a filename starts with ASCII A-Z or a-z
 func StartsWithAlpha(path string, info os.FileInfo) error {
 	var r = path[0]

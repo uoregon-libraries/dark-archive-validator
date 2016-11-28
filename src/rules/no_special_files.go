@@ -5,6 +5,10 @@ import (
 	"os"
 )
 
+func init() {
+	RegisterValidator("no-special-files", NoSpecialFiles)
+}
+
 // NoSpecialFiles verifies that the file described by info is a regular file or
 // a directory, reporting problems otherwise
 func NoSpecialFiles(path string, info os.FileInfo) error {

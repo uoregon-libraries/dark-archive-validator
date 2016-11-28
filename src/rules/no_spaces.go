@@ -6,6 +6,10 @@ import (
 	"unicode"
 )
 
+func init() {
+	RegisterValidator("no-spaces", NoSpaces)
+}
+
 // NoSpaces verifies that the file described by info has no spaces.  Trailing
 // spaces are reported with a special message since those can be a pain to
 // notice.

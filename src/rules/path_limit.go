@@ -5,6 +5,10 @@ import (
 	"os"
 )
 
+func init() {
+	RegisterValidator("path-limit", PathLimitFn(200))
+}
+
 // PathLimitFn returns a validator function which will report when the path
 // exceeds n characters
 func PathLimitFn(n int) ValidatorFunc {

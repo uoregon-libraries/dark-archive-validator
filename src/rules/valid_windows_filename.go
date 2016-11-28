@@ -15,6 +15,10 @@ var winReservedFilenames = []string{"CON", "PRN", "AUX", "NUL", "COM1", "COM2",
 	"COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3",
 	"LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"}
 
+func init() {
+	RegisterValidator("valid-windows-filename", ValidWindowsFilename)
+}
+
 // ValidWindowsFilename is a ValidatorFunc which validates the that file's name
 // matches Windows naming conventions.  The path itself is not validated here.
 func ValidWindowsFilename(path string, info os.FileInfo) error {

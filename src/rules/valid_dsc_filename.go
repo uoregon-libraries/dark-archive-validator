@@ -10,6 +10,10 @@ import (
 var dscInvalidChars = []rune{'&', ',', '*', '%', '#', ';', '(', ')', '!', '@',
 	'$', '^', '~', '\'', '{', '}', '[', ']', '\\', '?', '<', '>'}
 
+func init() {
+	RegisterValidator("valid-dsc-filename", ValidDSCFilename)
+}
+
 // ValidDSCFilename rejects files that use characters DSC disallows
 func ValidDSCFilename(path string, info os.FileInfo) error {
 	var badChars []string

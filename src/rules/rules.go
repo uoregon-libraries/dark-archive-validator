@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 )
 
@@ -14,22 +15,26 @@ type Failure struct {
 	E error
 }
 
-// Engine is the rules runner
+// Engine is the rules runner.  By default it will run all known validators
+// except those explicitly skipped.
 type Engine struct {
-	Validators []Validator
 	TraverseFn func(string, filepath.WalkFunc) error
+	skip       map[string]bool
 }
 
 // NewEngine returns an engine with the one required rule we have
 func NewEngine() *Engine {
-	var e = &Engine{TraverseFn: filepath.Walk}
-	e.AddValidator("valid-windows-filename", ValidWindowsFilename)
-	return e
+	return &Engine{TraverseFn: filepath.Walk, skip: make(map[string]bool)}
 }
 
-// AddValidator maps a name to a validator
-func (e *Engine) AddValidator(name string, v ValidatorFunc) {
-	e.Validators = append(e.Validators, Validator{name, v})
+// Skip looks up the given validator by name and, if it exists, adds it to this
+// engine's validator skip list
+func (e *Engine) Skip(name string) (ok bool) {
+	_, ok = validatorLookup[name]
+	if ok {
+		e.skip[name] = ok
+	}
+	return
 }
 
 // ValidateTree walks all files under root, sending everything found to all
@@ -50,12 +55,29 @@ func (e *Engine) ValidateTree(root string, failFunc func(string, []Failure)) {
 	})
 }
 
-// Validate checks the given full path against all validators, returning an
-// array of errors found
+// ValidatorNames returns a sorted list of all validator names which are not
+// explicitly skipped.  We sort in order to ensure consistent reporting.
+func (e *Engine) ValidatorNames() []string {
+	var validatorNames []string
+	var v Validator
+	for _, v = range validatorLookup {
+		if e.skip[v.Name] {
+			continue
+		}
+		validatorNames = append(validatorNames, v.Name)
+	}
+	sort.Strings(validatorNames)
+	return validatorNames
+}
+
+// Validate checks the given full path against all validators not in the skip
+// list, returning an array of errors found
 func (e *Engine) Validate(path string, info os.FileInfo) []Failure {
 	var flist []Failure
 
-	for _, v := range e.Validators {
+	var name string
+	for _, name = range e.ValidatorNames() {
+		var v = validatorLookup[name]
 		var err = v.Validate(path, info)
 		if err != nil {
 			flist = append(flist, Failure{v, err})
