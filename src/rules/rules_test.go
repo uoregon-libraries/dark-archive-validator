@@ -68,6 +68,7 @@ func ExampleEngine() {
 	e.AddValidator("starts-with-alpha", rules.StartsWithAlpha)
 	e.AddValidator("nonzero-filesize", rules.NonzeroFilesize)
 	e.AddValidator("valid-dsc-filename", rules.ValidDSCFilename)
+	e.AddValidator("no-control-chars", rules.NoControlChars)
 
 	e.ValidateTree("/this/path/shouldn't/actually/have/any/kind/of/testing/so I can do *all kinds* of bad things in here!\x1b\x1b/", failFunc)
 
@@ -86,4 +87,5 @@ func ExampleEngine() {
 	// no-special-files says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" is a device file
 	// path-limit says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" exceeds the maximum path length of 50 characters
 	// valid-dsc-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters (*)
+	// no-control-chars says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains one or more control characters
 }
