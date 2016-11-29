@@ -111,7 +111,7 @@ func ExampleEngine() {
 // actually catch an error, since that validator only catches items that have
 // no other failures.  For simplicity, we use fakeFileWalk2, which only has one
 // fake file to test.
-func ExampleEngine2() {
+func ExampleEngine_skipDSCForRestrictiveTest() {
 	var e = rules.NewEngine()
 	e.TraverseFn = fakeFileWalk2
 	e.Skip("valid-dsc-filename")
