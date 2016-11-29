@@ -49,6 +49,12 @@ func fakeFileWalk(root string, walkfn filepath.WalkFunc) error {
 	walk("", rules.NewFakeFile("0.txt", 1024))
 	// File that violates DSC conventions
 	walk("", rules.NewFakeFile("abc@foo.bar", 1024))
+	// Too many periods
+	walk("", rules.NewFakeFile("foo.bar.txt", 1024))
+	walk("", rules.NewFakeDir("foo.bar.dir"))
+	// Hidden
+	walk("", rules.NewFakeFile(".hiddenfile", 1024))
+	walk("", rules.NewFakeDir(".hiddendir"))
 
 	// Multiple problems: bad characters for windows, bad characters for our own
 	// sanity, too long a path, device file
@@ -100,6 +106,12 @@ func ExampleEngine() {
 	// no-spaces says "thisisbad.txt\u202f" ends with a space
 	// starts-with-alpha says "0.txt" starts with a non-alphabetic character
 	// valid-dsc-filename says "abc@foo.bar" contains invalid characters (@)
+	// has-only-one-period says "foo.bar.txt" has 2 periods (maximum is 1)
+	// has-only-one-period says "foo.bar.dir" has 2 periods (maximum is 1)
+	// no-hidden-files says ".hiddenfile" is hidden (starts with a period)
+	// starts-with-alpha says ".hiddenfile" starts with a non-alphabetic character
+	// no-hidden-files says ".hiddendir" is hidden (starts with a period)
+	// starts-with-alpha says ".hiddendir" starts with a non-alphabetic character
 	// no-control-chars says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains one or more control characters
 	// no-special-files says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" is a device file
 	// path-limit says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" exceeds the maximum path length of 50 characters
