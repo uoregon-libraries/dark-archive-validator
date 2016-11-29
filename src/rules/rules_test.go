@@ -35,6 +35,8 @@ func fakeFileWalk(root string, walkfn filepath.WalkFunc) error {
 	walk("lPt2.dir", rules.NewFakeFile("fILe.txt", 2048))
 	// Zero-length files are bad, mmkay?
 	walk("lPt2.dir", rules.NewFakeFile("zerofile.txt", 0))
+	// File with no extension
+	walk("lPt2.dir", rules.NewFakeFile("fILe", 2048))
 	// File with space
 	walk("", rules.NewFakeFile("this isbad.txt", 1024))
 	// File with space at the end
@@ -90,6 +92,7 @@ func ExampleEngine() {
 	// no-special-files says "flarb" is a symbolic link
 	// valid-windows-filename says "lPt2.dir" uses a reserved file name
 	// nonzero-filesize says "lPt2.dir/zerofile.txt" is an empty file
+	// has-extension says "lPt2.dir/fILe" doesn't have an extension
 	// no-spaces says "this isbad.txt" has a space in the filename
 	// no-spaces says "thisisbad.txt " ends with a space
 	// valid-windows-filename says "thisisbad.txt " has a trailing space
