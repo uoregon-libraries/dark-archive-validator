@@ -39,7 +39,8 @@ func (v Validator) Validate(path string, info os.FileInfo, fList []Failure) []Fa
 
 // ValidatorList encapsulators a slice of validators primarily for sorting
 type ValidatorList []Validator
-func (vl ValidatorList) Len() int { return len(vl) }
+
+func (vl ValidatorList) Len() int      { return len(vl) }
 func (vl ValidatorList) Swap(i, j int) { vl[i], vl[j] = vl[j], vl[i] }
 
 // Less is defined as having a numerically lower priority - or equal priority

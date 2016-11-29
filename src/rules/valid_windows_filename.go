@@ -38,7 +38,7 @@ func ValidWindowsFilename(path string, info os.FileInfo) error {
 			break
 		}
 
-		if strings.HasPrefix(name, badfname + ".") {
+		if strings.HasPrefix(name, badfname+".") {
 			badName = true
 		}
 	}

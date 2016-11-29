@@ -62,7 +62,7 @@ func fakeFileWalk(root string, walkfn filepath.WalkFunc) error {
 
 	// Multiple problems: bad characters for windows, bad characters for our own
 	// sanity, too long a path, device file
-	walk(strings.Repeat("blah", 10) + "/dev/", rules.NewFakeDevice(":\"thi\x05ng*"))
+	walk(strings.Repeat("blah", 10)+"/dev/", rules.NewFakeDevice(":\"thi\x05ng*"))
 
 	return nil
 }

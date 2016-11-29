@@ -7,11 +7,11 @@ import (
 
 // FakeInfo will be used by multiple tests to supply fake file info data
 type FakeInfo struct {
-	name string
-	size int64
-	mode os.FileMode
+	name    string
+	size    int64
+	mode    os.FileMode
 	modTime time.Time
-	isDir bool
+	isDir   bool
 }
 
 func NewFakeFile(n string, s int64) FakeInfo {

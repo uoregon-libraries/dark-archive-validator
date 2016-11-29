@@ -1,4 +1,4 @@
-.PHONY: clean linux64 linux32 win win32 osx test lint
+.PHONY: clean linux64 linux32 win win32 osx test lint fmt
 
 linux64:
 	env GOOS=linux GOARCH=amd64 gb build
@@ -19,3 +19,6 @@ clean:
 
 lint:
 	GOPATH=$(PWD) gometalinter --disable gotype --deadline 10s src/...
+
+fmt:
+	find src -name "*.go" -exec gofmt -l -w -s {} \;
