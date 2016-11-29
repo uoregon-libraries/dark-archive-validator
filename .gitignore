@@ -3,3 +3,6 @@
 
 # GB vendored packages
 /vendor/src
+
+# Compiled binaries
+/bin
