@@ -1,5 +1,7 @@
-.PHONY: clean linux64 linux32 win win32 osx test lint fmt
+.PHONY: bin clean linux64 linux32 win win32 osx test lint fmt
 
+bin:
+	gb build
 linux64:
 	env GOOS=linux GOARCH=amd64 gb build
 linux32:
