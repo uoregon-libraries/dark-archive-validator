@@ -16,3 +16,6 @@ test:
 
 clean:
 	rm -rf pkg/
+
+lint:
+	GOPATH=$(PWD) gometalinter --disable gotype --deadline 10s src/...
