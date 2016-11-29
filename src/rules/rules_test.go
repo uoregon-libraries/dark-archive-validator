@@ -112,7 +112,7 @@ func ExampleEngine2() {
 	var e = rules.NewEngine()
 	e.TraverseFn = fakeFileWalk2
 	e.Skip("valid-dsc-filename")
-	e.ValidateTree("/blah/", failFunc)
+	e.ValidateTree("/blah", failFunc)
 
 	// Output:
 	// restrictive-naming says "abc@foo.bar" doesn't match required filename pattern

@@ -44,12 +44,13 @@ func (e *Engine) Skip(name string) (ok bool) {
 // registered validators, yielding to failFunc whenever a validation against a
 // file returns any errors
 func (e *Engine) ValidateTree(root string, failFunc func(string, []Failure)) {
+	root = filepath.Clean(root)
 	e.TraverseFn(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			log.Fatalf("CRITICAL - Unable to process %#v: %s", path, err)
 		}
 
-		var basepath = strings.Replace(path, root, "", -1)
+		var basepath = strings.Replace(path, root+"/", "", -1)
 		var fl = e.Validate(basepath, info)
 		if len(fl) > 0 {
 			failFunc(basepath, fl)
