@@ -15,7 +15,7 @@ test:
 	gb test -v
 
 clean:
-	rm -rf pkg/
+	rm -rf pkg/ bin/
 
 lint:
 	GOPATH=$(PWD) gometalinter --disable gotype --deadline 10s src/...
