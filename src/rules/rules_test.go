@@ -55,6 +55,10 @@ func fakeFileWalk(root string, walkfn filepath.WalkFunc) error {
 	// Hidden
 	walk("", rules.NewFakeFile(".hiddenfile", 1024))
 	walk("", rules.NewFakeDir(".hiddendir"))
+	// UTF-8
+	walk("", rules.NewFakeFile("foo‣‡•.txt", 1024))
+	// Bad UTF-8
+	walk("", rules.NewFakeFile("foo\xed\x88.txt", 1024))
 
 	// Multiple problems: bad characters for windows, bad characters for our own
 	// sanity, too long a path, device file
@@ -103,7 +107,9 @@ func ExampleEngine() {
 	// no-spaces says "thisisbad.txt " ends with a space
 	// valid-windows-filename says "thisisbad.txt " has a trailing space
 	// no-spaces says "this\u202fisbad.txt" has a space in the filename
+	// no-utf8 says "this\u202fisbad.txt" contains unicode characters (" ")
 	// no-spaces says "thisisbad.txt\u202f" ends with a space
+	// no-utf8 says "thisisbad.txt\u202f" contains unicode characters (" ")
 	// starts-with-alpha says "0.txt" starts with a non-alphabetic character
 	// valid-dsc-filename says "abc@foo.bar" contains invalid characters (@)
 	// has-only-one-period says "foo.bar.txt" has 2 periods (maximum is 1)
@@ -112,6 +118,8 @@ func ExampleEngine() {
 	// starts-with-alpha says ".hiddenfile" starts with a non-alphabetic character
 	// no-hidden-files says ".hiddendir" is hidden (starts with a period)
 	// starts-with-alpha says ".hiddendir" starts with a non-alphabetic character
+	// no-utf8 says "foo‣‡•.txt" contains unicode characters ("‣", "‡", "•")
+	// invalid-utf8 says "foo\xed\x88.txt" contains invalid unicode
 	// no-control-chars says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains one or more control characters
 	// no-special-files says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" is a device file
 	// path-limit says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" exceeds the maximum path length of 50 characters
