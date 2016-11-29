@@ -9,6 +9,8 @@ import (
 	"rules"
 )
 
+// fakeFileWalk fires off the walkfn on a variety of paths to test out most of
+// the validators
 func fakeFileWalk(root string, walkfn filepath.WalkFunc) error {
 	var walk = func(dir string, i os.FileInfo) {
 		var fullPath = filepath.Join(root, dir, i.Name())
@@ -53,6 +55,22 @@ func fakeFileWalk(root string, walkfn filepath.WalkFunc) error {
 	return nil
 }
 
+// fakeFileWalk2 tests that our "restrictive naming" catches things missed by
+// other validators.  It's separate from the above function because the most
+// obvious way to test this is by manually skipping other validators that would
+// otherwise trap the error.
+func fakeFileWalk2(root string, walkfn filepath.WalkFunc) error {
+	var walk = func(dir string, i os.FileInfo) {
+		var fullPath = filepath.Join(root, dir, i.Name())
+		walkfn(fullPath, i, nil)
+	}
+
+	// File that violates DSC conventions
+	walk("", rules.NewFakeFile("abc@foo.bar", 1024))
+
+	return nil
+}
+
 func failFunc(path string, failures []rules.Failure) {
 	for _, f := range failures {
 		fmt.Printf("%s says %#v %s\n", f.V.Name, path, f.E)
@@ -84,4 +102,18 @@ func ExampleEngine() {
 	// path-limit says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" exceeds the maximum path length of 50 characters
 	// valid-dsc-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters (*)
 	// valid-windows-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters (:, ", *)
+}
+
+// This example skips valid-dsc-filename in order to let restrictive-naming
+// actually catch an error, since that validator only catches items that have
+// no other failures.  For simplicity, we use fakeFileWalk2, which only has one
+// fake file to test.
+func ExampleEngine2() {
+	var e = rules.NewEngine()
+	e.TraverseFn = fakeFileWalk2
+	e.Skip("valid-dsc-filename")
+	e.ValidateTree("/blah/", failFunc)
+
+	// Output:
+	// restrictive-naming says "abc@foo.bar" doesn't match required filename pattern
 }
