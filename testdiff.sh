@@ -10,10 +10,10 @@ if [[ $success == 1 ]]; then
   exit 0
 fi
 
-go run testsplit.go test.log
+go run testsplit.go test.log || cat test.log
 for gotfile in $(find . -name "*.got"); do
   wantfile=${gotfile%.got}.want
   diff -u $wantfile $gotfile || true
 done
 
-rm test.log test.*.want test.*.got
+rm -f test.log test.*.want test.*.got

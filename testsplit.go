@@ -29,7 +29,7 @@ func main() {
 	for s.Scan() {
 		var line = s.Text()
 		if line == "FAIL" {
-			break
+			os.Exit(0)
 		}
 
 		var m = reExample.FindStringSubmatch(line)
@@ -68,4 +68,5 @@ func main() {
 			}
 		}
 	}
+	os.Exit(1)
 }
