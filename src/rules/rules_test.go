@@ -101,6 +101,7 @@ func ExampleEngine() {
 	// Output:
 	// no-special-files says "flarb" is a symbolic link
 	// valid-windows-filename says "lPt2.dir" uses a reserved file name
+	// no-duped-names says "lPt2.dir/fILe.txt" is a duplicate of "lPt2.dir/file.txt"
 	// nonzero-filesize says "lPt2.dir/zerofile.txt" is an empty file
 	// has-extension says "lPt2.dir/fILe" doesn't have an extension
 	// no-spaces says "this isbad.txt" has a space in the filename
@@ -132,6 +133,7 @@ func ExampleEngine() {
 // no other failures.  For simplicity, we use fakeFileWalk2, which only has one
 // fake file to test.
 func ExampleEngine_skipDSCForRestrictiveTest() {
+	rules.ResetDupemap()
 	var e = rules.NewEngine()
 	e.TraverseFn = fakeFileWalk2
 	e.Skip("valid-dsc-filename")
