@@ -142,3 +142,18 @@ func ExampleEngine_skipDSCForRestrictiveTest() {
 	// Output:
 	// restrictive-naming says "abc@foo.bar" doesn't match required filename pattern
 }
+
+// This example shows how serious we are about the filename restrictions.
+// DEADLY SERIOUS, FOLKS.
+func ExampleEngine_noSkippingWindowsFilenameRestriction() {
+	var e = rules.NewEngine()
+	e.Skip(rules.VWFValidatorName)
+	for _, v := range e.Validators() {
+		if v.Name == rules.VWFValidatorName {
+			fmt.Println("We still got it!")
+		}
+	}
+
+	// Output:
+	// We still got it!
+}

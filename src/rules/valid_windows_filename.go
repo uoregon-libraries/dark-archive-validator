@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+const VWFValidatorName = "valid-windows-filename"
+
 // These cannot be part of any filename in Windows
 var winReservedChars = []rune{'<', '>', ':', '"', '/', '\\', '|', '?', '*'}
 
@@ -16,7 +18,7 @@ var winReservedFilenames = []string{"CON", "PRN", "AUX", "NUL", "COM1", "COM2",
 	"LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"}
 
 func init() {
-	RegisterValidator("valid-windows-filename", ValidWindowsFilename)
+	RegisterValidator(VWFValidatorName, ValidWindowsFilename)
 }
 
 // ValidWindowsFilename is a ValidatorFunc which validates the that file's name
