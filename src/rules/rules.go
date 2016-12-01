@@ -58,6 +58,15 @@ func (e *Engine) Unskip(name string) bool {
 	return false
 }
 
+// SkipAll is to be used solely when manually setting up (via Unskip)
+// individual validators for precise use-cases.  As with Skip(), this will not
+// remove the Windows filename restriction validator.
+func (e *Engine) SkipAll() {
+	for _, v := range validators {
+		e.Skip(v.Name)
+	}
+}
+
 // ValidateTree walks all files under root, sending everything found to all
 // registered validators, yielding to failFunc whenever a validation against a
 // file returns any errors

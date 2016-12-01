@@ -154,6 +154,11 @@ func ExampleEngine_noSkippingWindowsFilenameRestriction() {
 		}
 	}
 
+	e.SkipAll()
+	var vList = e.Validators()
+	fmt.Printf("Len: %d; vList[0].Name: %s", len(vList), vList[0].Name)
+
 	// Output:
 	// We still got it!
+	// Len: 1; vList[0].Name: valid-windows-filename
 }
