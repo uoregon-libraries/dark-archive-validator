@@ -1,11 +1,14 @@
 package rules_test
 
 import (
+	"crypto/sha256"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"checksum"
 	"rules"
 )
 
@@ -79,6 +82,21 @@ func fakeFileWalk2(root string, walkfn filepath.WalkFunc) error {
 
 	// File that violates DSC conventions
 	walk("", rules.NewFakeFile("abc@foo.bar", 1024))
+
+	return nil
+}
+
+// fakeFileWalkChecksum walks files that will cause a fake checksum collision.
+// The fake checksum function runs against the base filename.
+func fakeFileWalkChecksum(root string, walkfn filepath.WalkFunc) error {
+	var walk = func(dir string, i os.FileInfo) {
+		var fullPath = filepath.Join(root, dir, i.Name())
+		walkfn(fullPath, i, nil)
+	}
+
+	walk("a", rules.NewFakeFile("one.txt", 1024))
+	walk("b", rules.NewFakeFile("one.txt", 1024))
+	walk("b", rules.NewFakeFile("two.txt", 1024))
 
 	return nil
 }
@@ -161,4 +179,22 @@ func ExampleEngine_noSkippingWindowsFilenameRestriction() {
 	// Output:
 	// We still got it!
 	// Len: 1; vList[0].Name: valid-windows-filename
+}
+
+func fakeBlockWrite(path string, w io.Writer) error {
+	var basename = filepath.Base(path)
+	w.Write([]byte(basename))
+	return nil
+}
+
+// This example verifies checksums are working properly
+func ExampleEngine_onlyTestChecksums() {
+	var e = rules.NewEngine()
+	e.TraverseFn = fakeFileWalkChecksum
+	e.SkipAll()
+	e.Checksummer = &checksum.Checksum{sha256.New(), fakeBlockWrite}
+	e.ValidateTree("/blah", failFunc)
+
+	// Output:
+	// no-content-dupes says "b/one.txt" duplicates the content of "a/one.txt"
 }
