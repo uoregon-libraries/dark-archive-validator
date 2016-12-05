@@ -92,6 +92,12 @@ func (e *Engine) ValidateTree(root string, failFunc func(string, []Failure)) {
 			log.Fatalf("CRITICAL - Unable to process %#v: %s", path, err)
 		}
 
+		// The root filename doesn't matter, since our goal is to validate the
+		// contents of root, and then move them to the *real* dark archive root
+		if root == path {
+			return nil
+		}
+
 		var basepath = strings.Replace(path, root+"/", "", -1)
 		var fl = e.Validate(path, basepath, info)
 		if len(fl) > 0 {
