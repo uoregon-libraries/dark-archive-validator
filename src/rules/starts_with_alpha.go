@@ -11,7 +11,7 @@ func init() {
 
 // StartsWithAlpha enforces that a filename starts with ASCII A-Z or a-z
 func StartsWithAlpha(path string, info os.FileInfo) error {
-	var r = path[0]
+	var r = info.Name()[0]
 	if r >= 'A' && r <= 'Z' {
 		return nil
 	}
