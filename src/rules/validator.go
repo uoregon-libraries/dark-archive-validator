@@ -12,21 +12,36 @@ type ValidatorFunc func(path string, info os.FileInfo) error
 // and returns an error if any was found.  priority is used to order validators
 // in an Engine's ValidationNames list.  Setting it below zero pushing a
 // validator to run before the default, whereas setting it greater than zero
-// makes validators run after the default validators run.  skipOnFail should be
-// set to true if the validator shouldn't be run if other failures have already
-// happened, allowing for validators which are really there just to catch
-// unexpected problems.
+// makes validators run after the default validators run.
+// skipOnPreviousFailures should be set to true if the validator shouldn't be
+// run if other failures have already happened, allowing for validators which
+// are really there just to catch unexpected problems.  stopOnFailure should be
+// set to true if this validator is expected to tell enough information that
+// further validations are going to just confuse the report.
 type Validator struct {
-	Name       string
-	vf         ValidatorFunc
-	priority   int8
-	skipOnFail bool
+	Name     string
+	vf       ValidatorFunc
+	priority int8
+
+	// skipOnPreviousFailures flags a validator not to run if there were previous failures
+	skipOnPreviousFailures bool
+
+	// stopOnFailure flags future validators not to run if this validator failed
+	stopOnFailure bool
 }
 
 // Validate checks for errors in the validator function and returns the
 // (potentially updated) failure list
 func (v Validator) Validate(path string, info os.FileInfo, fList []Failure) []Failure {
-	if v.skipOnFail && len(fList) > 0 {
+	var l = len(fList)
+	// If this validator isn't supposed to report already-failed items, break out
+	// now if there are existing failures
+	if v.skipOnPreviousFailures && l > 0 {
+		return fList
+	}
+
+	// If the previous validator should stop all validations, break out now
+	if l > 0 && fList[l-1].V.stopOnFailure {
 		return fList
 	}
 
@@ -67,9 +82,9 @@ func RegisterValidator(name string, validate ValidatorFunc) {
 }
 
 // RegisterCustomValidator creates a validator with explicitly set values for
-// priority and skipOnFail, and puts that in the validator list
-func RegisterCustomValidator(name string, validate ValidatorFunc, priority int8, skipOnFail bool) {
-	register(Validator{name, validate, priority, skipOnFail})
+// priority and failure modes, and puts that in the validator list
+func RegisterCustomValidator(name string, validate ValidatorFunc, priority int8, skipOnPreviousFailures, stopOnFailure bool) {
+	register(Validator{name, validate, priority, skipOnPreviousFailures, stopOnFailure})
 }
 
 // NukeValidatorList erases all entries from the list of known validators.

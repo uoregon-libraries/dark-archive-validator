@@ -10,7 +10,7 @@ var allowedFilename = regexp.MustCompile(`\A[A-Za-z][A-Za-z0-9_-]*\.[A-Za-z0-9_-
 var allowedDirname = regexp.MustCompile(`\A[A-Za-z][A-Za-z0-9_-]*(\.[A-Za-z0-9_-]+)?\z`)
 
 func init() {
-	RegisterCustomValidator("restrictive-naming", RestrictiveNaming, 100, true)
+	RegisterCustomValidator("restrictive-naming", RestrictiveNaming, 100, true, false)
 }
 
 // RestrictiveNaming enforces that only VERY specific whitelisted characters
