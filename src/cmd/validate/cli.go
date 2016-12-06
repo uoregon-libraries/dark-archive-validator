@@ -29,6 +29,25 @@ func usage(err error) {
 	os.Exit(status)
 }
 
+func listValidatorsAndExit() {
+	fmt.Printf("Known validators:\n")
+	for _, v := range engine.Validators() {
+		fmt.Printf("  %s\n", v.Name)
+	}
+	os.Exit(0)
+}
+
+func processSkipList() []string {
+	var invalids []string
+	for _, skip := range opts.SkipList {
+		if !engine.Skip(skip) {
+			invalids = append(invalids, skip)
+		}
+	}
+
+	return invalids
+}
+
 func processCLI() {
 	parser = flags.NewParser(&opts, flags.HelpFlag)
 	parser.Usage = "[OPTIONS] <path to validate>"
@@ -39,23 +58,13 @@ func processCLI() {
 
 	// If listing validators, nothing else matters
 	if opts.ListValidators {
-		fmt.Printf("Known validators:\n")
-		for _, v := range engine.Validators() {
-			fmt.Printf("  %s\n", v.Name)
-		}
-		os.Exit(0)
+		listValidatorsAndExit()
 	}
 
 	// Check for skips so we can verify those quickly
-	for _, skip := range opts.SkipList {
-		var invalids []string
-		if !engine.Skip(skip) {
-			invalids = append(invalids, skip)
-		}
-
-		if len(invalids) != 0 {
-			usage(fmt.Errorf("Invalid --skip value(s): %s", strings.Join(invalids, ", ")))
-		}
+	var invalids = processSkipList()
+	if len(invalids) != 0 {
+		usage(fmt.Errorf("Invalid --skip value(s): %s", strings.Join(invalids, ", ")))
 	}
 
 	// Not listing validators; need to check for valid path
