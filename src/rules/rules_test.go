@@ -130,7 +130,7 @@ func ExampleEngine() {
 	// no-spaces says "thisisbad.txt\u202f" ends with a space
 	// no-utf8 says "thisisbad.txt\u202f" contains unicode characters (" ")
 	// starts-with-alpha says "0.txt" starts with a non-alphabetic character
-	// valid-dsc-filename says "abc@foo.bar" contains invalid characters (@)
+	// valid-dsc-filename says "abc@foo.bar" contains invalid characters: @
 	// has-only-one-period says "foo.bar.txt" has 2 periods (maximum is 1)
 	// has-only-one-period says "foo.bar.dir" has 2 periods (maximum is 1)
 	// no-hidden-files says ".hiddenfile" is hidden (starts with a period)
@@ -143,8 +143,8 @@ func ExampleEngine() {
 	// no-special-files says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" is a device file
 	// path-limit says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" exceeds the maximum path length of 50 characters
 	// starts-with-alpha says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" starts with a non-alphabetic character
-	// valid-dsc-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters (*)
-	// valid-windows-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters (:, ", *)
+	// valid-dsc-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters: *
+	// valid-windows-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters: : " *
 }
 
 // This example skips valid-dsc-filename in order to let restrictive-naming

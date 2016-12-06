@@ -26,13 +26,13 @@ func init() {
 // ValidWindowsFilename is a ValidatorFunc which validates the that file's name
 // matches Windows naming conventions.  The path itself is not validated here.
 func ValidWindowsFilename(path string, info os.FileInfo) error {
-	var badChars []string
+	var badChars []rune
 	var badName bool
 
 	var name = strings.ToUpper(info.Name())
 	for _, r := range winReservedChars {
 		if strings.ContainsRune(name, r) {
-			badChars = append(badChars, string(r))
+			badChars = append(badChars, r)
 		}
 	}
 
@@ -48,7 +48,7 @@ func ValidWindowsFilename(path string, info os.FileInfo) error {
 	}
 
 	if len(badChars) > 0 {
-		return fmt.Errorf("contains invalid characters (%s)", strings.Join(badChars, ", "))
+		return fmt.Errorf("contains invalid characters: %s", joinRunes(badChars))
 	}
 	if badName {
 		return fmt.Errorf("uses a reserved file name")
