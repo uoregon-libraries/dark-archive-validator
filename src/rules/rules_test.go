@@ -142,6 +142,7 @@ func ExampleEngine() {
 	// no-control-chars says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains one or more control characters
 	// no-special-files says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" is a device file
 	// path-limit says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" exceeds the maximum path length of 50 characters
+	// starts-with-alpha says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" starts with a non-alphabetic character
 	// valid-dsc-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters (*)
 	// valid-windows-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters (:, ", *)
 }
