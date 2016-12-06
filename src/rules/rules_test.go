@@ -62,6 +62,12 @@ func fakeFileWalk(root string, walkfn filepath.WalkFunc) error {
 	walk("", rules.NewFakeFile("foo‣‡•.txt", 1024))
 	// Bad UTF-8
 	walk("", rules.NewFakeFile("foo\xed\x88.txt", 1024))
+	// Mac OSX garbage
+	walk("", rules.NewFakeFile(".DS_Store", 1024))
+	walk("", rules.NewFakeFile("._foo.txt", 1024))
+	// Windows garbage
+	walk("", rules.NewFakeFile("Thumbs.DB", 1024))
+	walk("", rules.NewFakeFile("dEsktoP.Ini", 1024))
 
 	// Multiple problems: bad characters for windows, bad characters for our own
 	// sanity, too long a path, device file
@@ -139,6 +145,15 @@ func ExampleEngine() {
 	// starts-with-alpha says ".hiddendir" starts with a non-alphabetic character
 	// no-utf8 says "foo‣‡•.txt" contains unicode characters ("‣", "‡", "•")
 	// invalid-utf8 says "foo\xed\x88.txt" contains invalid unicode
+	// no-extraneous-files says ".DS_Store" is an extraneous file and should be deleted
+	// no-hidden-files says ".DS_Store" is hidden (starts with a period)
+	// starts-with-alpha says ".DS_Store" starts with a non-alphabetic character
+	// has-only-one-period says "._foo.txt" has 2 periods (maximum is 1)
+	// no-extraneous-files says "._foo.txt" is an extraneous file and should be deleted
+	// no-hidden-files says "._foo.txt" is hidden (starts with a period)
+	// starts-with-alpha says "._foo.txt" starts with a non-alphabetic character
+	// no-extraneous-files says "Thumbs.DB" is an extraneous file and should be deleted
+	// no-extraneous-files says "dEsktoP.Ini" is an extraneous file and should be deleted
 	// no-control-chars says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains one or more control characters
 	// no-special-files says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" is a device file
 	// path-limit says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" exceeds the maximum path length of 50 characters
