@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+// VWFValidatorName is defined as a constant for use both here and in the
+// Engine's skip check (this rule is hard-coded to not allow skipping)
 const VWFValidatorName = "valid-windows-filename"
 
 // These cannot be part of any filename in Windows

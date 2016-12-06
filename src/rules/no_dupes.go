@@ -18,6 +18,8 @@ func ResetDupemap() {
 	nameLookup = make(map[string]string)
 }
 
+// NoDupedNames verifies that no two file names are the same, comparing
+// case-insensitively since the target filesystem is case insensitive
 func NoDupedNames(path string, info os.FileInfo) error {
 	var pathUpper = strings.ToUpper(path)
 	if nameLookup[pathUpper] != "" {
