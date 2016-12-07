@@ -33,15 +33,11 @@ func NewEngine() *Engine {
 // Skip looks up the given validator by name and, if it exists, adds it to this
 // engine's validator skip list
 //
-// Note that this will NEVER remove the windows filesystem restriction checks,
-// as the dark archive will not accept file/dir names violating those rules
+// Note that this will NEVER remove critical checks, as those rules are in
+// place so the dark archive filesystem works properly
 func (e *Engine) Skip(name string) (ok bool) {
-	if name == VWFValidatorName {
-		return false
-	}
-
 	for _, v := range validators {
-		if v.Name == name {
+		if v.Name == name && v.Criticality > CCritical {
 			e.skip[name] = true
 			return true
 		}
@@ -103,9 +99,6 @@ func (e *Engine) ValidateTree(root string, failFunc func(string, []Failure)) {
 func (e *Engine) Validators() ValidatorList {
 	var vList ValidatorList
 	var v Validator
-
-	// Seriously, there is NO skipping Windows filename validation
-	e.Unskip(VWFValidatorName)
 
 	for _, v = range validators {
 		if e.skip[v.Name] {

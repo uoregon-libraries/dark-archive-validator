@@ -149,10 +149,10 @@ func ExampleEngine() {
 	// no-extraneous-files says "._foo.txt" is an extraneous file and should be deleted
 	// no-extraneous-files says "Thumbs.DB" is an extraneous file and should be deleted
 	// no-extraneous-files says "dEsktoP.Ini" is an extraneous file and should be deleted
+	// valid-windows-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters: : " *
 	// no-control-chars says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains one or more control characters
 	// no-special-files says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" is a device file
 	// path-limit says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" exceeds the maximum path length of 50 characters
-	// valid-windows-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters: : " *
 	// starts-with-alpha says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" starts with a non-alphabetic character
 	// valid-dsc-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters: *
 }
@@ -172,24 +172,26 @@ func ExampleEngine_skipDSCForRestrictiveTest() {
 	// restrictive-naming says "abc@foo.bar" doesn't match required filename pattern
 }
 
-// This example shows how serious we are about the filename restrictions.
-// DEADLY SERIOUS, FOLKS.
-func ExampleEngine_noSkippingWindowsFilenameRestriction() {
+// This example shows how serious we are about not skipping critical
+// validations.  DEADLY SERIOUS, FOLKS.
+func ExampleEngine_noSkippingCriticalValidations() {
 	var e = rules.NewEngine()
-	e.Skip(rules.VWFValidatorName)
 	for _, v := range e.Validators() {
-		if v.Name == rules.VWFValidatorName {
-			fmt.Println("We still got it!")
-		}
+		e.Skip(v.Name)
+	}
+
+	for _, v := range e.Validators() {
+		fmt.Println("After manually running Skip, found", v.Name)
 	}
 
 	e.SkipAll()
-	var vList = e.Validators()
-	fmt.Printf("Len: %d; vList[0].Name: %s", len(vList), vList[0].Name)
+	for _, v := range e.Validators() {
+		fmt.Println("After SkipAll, found", v.Name)
+	}
 
 	// Output:
-	// We still got it!
-	// Len: 1; vList[0].Name: valid-windows-filename
+	// After manually running Skip, found valid-windows-filename
+	// After SkipAll, found valid-windows-filename
 }
 
 func fakeBlockWrite(path string, w io.Writer) error {

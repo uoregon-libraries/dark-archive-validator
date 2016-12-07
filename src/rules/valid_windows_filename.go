@@ -6,10 +6,6 @@ import (
 	"strings"
 )
 
-// VWFValidatorName is defined as a constant for use both here and in the
-// Engine's skip check (this rule is hard-coded to not allow skipping)
-const VWFValidatorName = "valid-windows-filename"
-
 // These cannot be part of any filename in Windows
 var winReservedChars = []rune{'<', '>', ':', '"', '/', '\\', '|', '?', '*'}
 
@@ -20,7 +16,7 @@ var winReservedFilenames = []string{"CON", "PRN", "AUX", "NUL", "COM1", "COM2",
 	"LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"}
 
 func init() {
-	RegisterValidatorHigh(VWFValidatorName, ValidWindowsFilename)
+	RegisterValidatorCritical("valid-windows-filename", ValidWindowsFilename)
 }
 
 // ValidWindowsFilename is a ValidatorFunc which validates the that file's name

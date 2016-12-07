@@ -11,13 +11,16 @@ type Criticality int
 // ensure they're sorted after high-importance items.  Normal is explicitly set
 // to zero since that's the int default.
 const (
-	CHigh   Criticality = -1
-	CNormal Criticality = 0
-	CLow    Criticality = 1
+	CCritical Criticality = -2
+	CHigh     Criticality = -1
+	CNormal   Criticality = 0
+	CLow      Criticality = 1
 )
 
 func (c Criticality) String() string {
 	switch c {
+	case CCritical:
+		return "Critical"
 	case CHigh:
 		return "High"
 	case CNormal:
@@ -119,6 +122,11 @@ func register(v Validator) {
 // priority, and no skipping on failure, then puts it in the validator list
 func RegisterValidator(name string, validate ValidatorFunc) {
 	register(Validator{Name: name, vf: validate})
+}
+
+// RegisterValidatorCritical registers a critical validator
+func RegisterValidatorCritical(name string, validate ValidatorFunc) {
+	register(Validator{Name: name, vf: validate, Criticality: CCritical})
 }
 
 // RegisterValidatorHigh registers a high-criticality validator
