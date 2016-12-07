@@ -55,7 +55,7 @@ func exportValidationFailures() {
 	for _, fvf := range fileValidationFailures {
 		// Prep the columns
 		var columns = make([]string, len(allValidatorNames)+1)
-		columns[0] = fvf.Filepath
+		columns[0] = fmt.Sprintf("%#v", fvf.Filepath)
 
 		// Build the failure message for the appropriate column
 		for _, f := range fvf.Failures {
