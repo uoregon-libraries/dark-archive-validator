@@ -1,9 +1,13 @@
 package main
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"os"
 	"strings"
+
+	"checksum"
+	"rules"
 
 	"github.com/jessevdk/go-flags"
 )
@@ -11,8 +15,8 @@ import (
 var parser *flags.Parser
 var opts struct {
 	SkipList       []string `short:"s" long:"skip" description:"Skip a particular validator.  Cannot be used to skip Windows filename validations.  Can be repeated to skip multiple validations."`
-	SHA256         bool     `long:"sha256" description:"Use SHA-256 checksum to look for duplicate content"`
-	ListValidators bool     `short:"l" long:"list-validators" description:"List all validators' names"`
+	Quick          bool     `long:"quick" description:"Skip checksum and lowest-criticality validators"`
+	ListValidators bool     `short:"l" long:"list-validators" description:"List all validators this command would have run"`
 }
 
 func usage(err error) {
@@ -30,7 +34,7 @@ func usage(err error) {
 }
 
 func listValidatorsAndExit() {
-	fmt.Printf("Known validators:\n")
+	fmt.Printf("Validators to run:\n")
 	for _, v := range engine.Validators() {
 		fmt.Printf("  %s (%s)\n", v.Name, v.Criticality)
 	}
@@ -48,6 +52,14 @@ func processSkipList() []string {
 	return invalids
 }
 
+func skipUnimportantValidators() {
+	for _, v := range engine.Validators() {
+		if !v.IsImportant() {
+			engine.Skip(v.Name)
+		}
+	}
+}
+
 func processCLI() {
 	parser = flags.NewParser(&opts, flags.HelpFlag)
 	parser.Usage = "[OPTIONS] <path to validate>"
@@ -56,9 +68,16 @@ func processCLI() {
 		usage(err)
 	}
 
-	// If listing validators, nothing else matters
-	if opts.ListValidators {
-		listValidatorsAndExit()
+	if len(more) > 0 {
+		rootPath = more[0]
+	}
+	rules.RegisterChecksumValidator(rootPath, checksum.New(sha256.New()))
+
+	// --quick skips non-critical validators and the very slow checksumming
+	// validator
+	if opts.Quick {
+		skipUnimportantValidators()
+		opts.SkipList = append(opts.SkipList, "no-duped-content")
 	}
 
 	// Check for skips so we can verify those quickly
@@ -67,22 +86,23 @@ func processCLI() {
 		usage(fmt.Errorf("Invalid --skip value(s): %s", strings.Join(invalids, ", ")))
 	}
 
+	// If listing validators, nothing else matters
+	if opts.ListValidators {
+		listValidatorsAndExit()
+	}
+
 	// Not listing validators; need to check for valid path
 	if err == nil && len(more) != 1 {
 		usage(fmt.Errorf("must specify exactly one path to validate"))
 	}
 
 	var info os.FileInfo
-	var vPath = more[0]
-	info, err = os.Stat(vPath)
+	info, err = os.Stat(rootPath)
 	if err != nil {
 		usage(err)
 	}
 
 	if !info.Mode().IsDir() {
-		usage(fmt.Errorf("%s is not a valid path to validate", vPath))
+		usage(fmt.Errorf("%s is not a valid path to validate", rootPath))
 	}
-
-	// All seems well; set the rootPath and we're good to go
-	rootPath = more[0]
 }

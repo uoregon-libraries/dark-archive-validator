@@ -1,11 +1,9 @@
 package main
 
 import (
-	"crypto/sha256"
 	"fmt"
 	"strings"
 
-	"checksum"
 	"rules"
 )
 
@@ -24,9 +22,6 @@ var fileValidationFailures = make([]FileValidationFailure, 0)
 func main() {
 	engine = rules.NewEngine()
 	processCLI()
-	if opts.SHA256 {
-		rules.RegisterChecksumValidator(rootPath, checksum.New(sha256.New()))
-	}
 	getAllValidators()
 	engine.ValidateTree(rootPath, failfunc)
 	exportValidationFailures()

@@ -38,5 +38,5 @@ func RegisterChecksumValidator(root string, c *checksum.Checksum) {
 		checksums[chksum] = path
 		return nil
 	}
-	RegisterValidatorHigh("no-content-dupes", validateChecksum)
+	RegisterValidatorHigh("no-duped-content", validateChecksum)
 }

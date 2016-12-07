@@ -207,5 +207,5 @@ func ExampleEngine_onlyTestChecksums() {
 	e.ValidateTree("/blah", failFunc)
 
 	// Output:
-	// no-content-dupes says "b/one.txt" duplicates the content of "a/one.txt"
+	// no-duped-content says "b/one.txt" duplicates the content of "a/one.txt"
 }

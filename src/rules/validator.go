@@ -78,6 +78,14 @@ func (v Validator) Validate(path string, info os.FileInfo, fList []Failure) []Fa
 	return fList
 }
 
+// IsImportant reports whether this validator should be considered necessary
+// even in quick runs.  We define this as being > low criticality or any
+// criticality with stopOnFailure behavior, as those tests can prevent other
+// less meaningful tests from running.
+func (v Validator) IsImportant() bool {
+	return v.Criticality < CLow || v.stopOnFailure
+}
+
 // ValidatorList encapsulators a slice of validators primarily for sorting
 type ValidatorList []Validator
 
