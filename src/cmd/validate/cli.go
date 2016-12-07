@@ -32,7 +32,7 @@ func usage(err error) {
 func listValidatorsAndExit() {
 	fmt.Printf("Known validators:\n")
 	for _, v := range engine.Validators() {
-		fmt.Printf("  %s\n", v.Name)
+		fmt.Printf("  %s (%s)\n", v.Name, v.Criticality)
 	}
 	os.Exit(0)
 }

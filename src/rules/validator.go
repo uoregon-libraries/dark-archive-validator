@@ -16,6 +16,19 @@ const (
 	CLow    Criticality = 1
 )
 
+func (c Criticality) String() string {
+	switch c {
+	case CHigh:
+		return "High"
+	case CNormal:
+		return "Normal"
+	case CLow:
+		return "Low"
+	default:
+		return "UNKNOWN"
+	}
+}
+
 // ValidatorFunc is the function called by a validator to determine if a path
 // is invalid in any way
 type ValidatorFunc func(path string, info os.FileInfo) error
@@ -34,7 +47,7 @@ type Validator struct {
 	Name        string
 	vf          ValidatorFunc
 	priority    int8
-	criticality Criticality
+	Criticality Criticality
 
 	// skipOnPreviousFailures flags a validator not to run if there were previous failures
 	skipOnPreviousFailures bool
@@ -80,8 +93,8 @@ func (vl ValidatorList) Less(i, j int) bool {
 		return vl[i].priority < vl[j].priority
 	}
 
-	if vl[i].criticality != vl[j].criticality {
-		return vl[i].criticality < vl[j].criticality
+	if vl[i].Criticality != vl[j].Criticality {
+		return vl[i].Criticality < vl[j].Criticality
 	}
 
 	return vl[i].Name < vl[j].Name
@@ -102,12 +115,12 @@ func RegisterValidator(name string, validate ValidatorFunc) {
 
 // RegisterValidatorHigh registers a high-criticality validator
 func RegisterValidatorHigh(name string, validate ValidatorFunc) {
-	register(Validator{Name: name, vf: validate, criticality: CHigh})
+	register(Validator{Name: name, vf: validate, Criticality: CHigh})
 }
 
 // RegisterValidatorLow registers a low-criticality validator
 func RegisterValidatorLow(name string, validate ValidatorFunc) {
-	register(Validator{Name: name, vf: validate, criticality: CLow})
+	register(Validator{Name: name, vf: validate, Criticality: CLow})
 }
 
 // RegisterCustomValidator creates a validator with explicitly set values for
