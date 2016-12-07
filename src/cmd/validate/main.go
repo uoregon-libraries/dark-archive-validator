@@ -25,7 +25,7 @@ func main() {
 	engine = rules.NewEngine()
 	processCLI()
 	if opts.SHA256 {
-		engine.Checksummer = checksum.New(sha256.New())
+		rules.RegisterChecksumValidator(rootPath, checksum.New(sha256.New()))
 	}
 	getAllValidators()
 	engine.ValidateTree(rootPath, failfunc)

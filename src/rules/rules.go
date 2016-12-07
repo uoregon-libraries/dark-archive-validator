@@ -1,9 +1,6 @@
 package rules
 
 import (
-	"checksum"
-	"fmt"
-	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -23,14 +20,6 @@ type Failure struct {
 type Engine struct {
 	TraverseFn func(string, filepath.WalkFunc) error
 	skip       map[string]bool
-
-	// checksums maps file paths to a checksum of the file for dupe checking as
-	// well as outputting a list of checksums
-	checksums map[string]string
-
-	// Checksummer can be overridden to whatever method we want to use.  If left
-	// nil, no checksumming occurs.
-	Checksummer *checksum.Checksum
 }
 
 // NewEngine returns an engine with the one required rule we have
@@ -38,7 +27,6 @@ func NewEngine() *Engine {
 	return &Engine{
 		TraverseFn: filepath.Walk,
 		skip:       make(map[string]bool),
-		checksums:  make(map[string]string),
 	}
 }
 
@@ -131,8 +119,7 @@ func (e *Engine) Validators() ValidatorList {
 }
 
 // Validate checks the given base path against all validators not in the skip
-// list, runs the checksum validation against the full path, and returns an
-// array of errors found
+// list, and returns an array of errors found
 func (e *Engine) Validate(path, basepath string, info os.FileInfo) []Failure {
 	var flist []Failure
 
@@ -141,31 +128,5 @@ func (e *Engine) Validate(path, basepath string, info os.FileInfo) []Failure {
 		flist = v.Validate(basepath, info, flist)
 	}
 
-	if info.Mode().IsRegular() && e.Checksummer != nil {
-		var f = e.validateChecksum(path, basepath)
-		if f.E != nil {
-			flist = append(flist, f)
-		}
-	}
-
 	return flist
-}
-
-// validateChecksum returns a failure if the given path's contents have already
-// been seen in another file (according to the checksum algorithm)
-func (e *Engine) validateChecksum(path, basepath string) (f Failure) {
-	var sum, err = e.Checksummer.Sum(path)
-	if err != nil && err != io.EOF {
-		panic(err)
-	}
-
-	var chksum = fmt.Sprintf("%x", sum)
-	if _, exists := e.checksums[chksum]; exists {
-		f.V = Validator{Name: "no-content-dupes"}
-		f.E = fmt.Errorf("duplicates the content of %#v", e.checksums[chksum])
-		return
-	}
-
-	e.checksums[chksum] = basepath
-	return
 }
