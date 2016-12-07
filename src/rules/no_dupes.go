@@ -9,7 +9,7 @@ import (
 var nameLookup = make(map[string]string)
 
 func init() {
-	RegisterValidatorHigh("no-duped-names", NoDupedNames)
+	RegisterValidatorCritical("no-duped-names", NoDupedNames)
 }
 
 // ResetDupemap clears the name lookup to allow for running multiple trees

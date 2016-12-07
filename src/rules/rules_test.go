@@ -190,7 +190,9 @@ func ExampleEngine_noSkippingCriticalValidations() {
 	}
 
 	// Output:
+	// After manually running Skip, found no-duped-names
 	// After manually running Skip, found valid-windows-filename
+	// After SkipAll, found no-duped-names
 	// After SkipAll, found valid-windows-filename
 }
 
