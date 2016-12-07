@@ -20,7 +20,7 @@ var winReservedFilenames = []string{"CON", "PRN", "AUX", "NUL", "COM1", "COM2",
 	"LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"}
 
 func init() {
-	RegisterValidator(VWFValidatorName, ValidWindowsFilename)
+	RegisterValidatorHigh(VWFValidatorName, ValidWindowsFilename)
 }
 
 // ValidWindowsFilename is a ValidatorFunc which validates the that file's name

@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	RegisterValidator("no-special-files", NoSpecialFiles)
+	RegisterValidatorHigh("no-special-files", NoSpecialFiles)
 }
 
 // NoSpecialFiles verifies that the file described by info is a regular file or

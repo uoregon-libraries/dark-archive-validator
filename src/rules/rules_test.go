@@ -118,7 +118,7 @@ func ExampleEngine() {
 	e.TraverseFn = fakeFileWalk
 
 	// For testing, we have to register a shorter path-limit validation
-	rules.RegisterValidator("path-limit", rules.PathLimitFn(50))
+	rules.RegisterValidatorHigh("path-limit", rules.PathLimitFn(50))
 
 	e.ValidateTree("/this/path/shouldn't/actually/have/any/kind/of/testing/so I can do *all kinds* of bad things in here!\x1b\x1b/", failFunc)
 
@@ -129,8 +129,8 @@ func ExampleEngine() {
 	// nonzero-filesize says "lPt2.dir/zerofile.txt" is an empty file
 	// has-extension says "lPt2.dir/fILe" doesn't have an extension
 	// no-spaces says "this isbad.txt" has a space in the filename
-	// no-spaces says "thisisbad.txt " ends with a space
 	// valid-windows-filename says "thisisbad.txt " has a trailing space
+	// no-spaces says "thisisbad.txt " ends with a space
 	// no-spaces says "this\u202fisbad.txt" has a space in the filename
 	// no-utf8 says "this\u202fisbad.txt" contains unicode characters (" ")
 	// no-spaces says "thisisbad.txt\u202f" ends with a space
@@ -152,9 +152,9 @@ func ExampleEngine() {
 	// no-control-chars says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains one or more control characters
 	// no-special-files says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" is a device file
 	// path-limit says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" exceeds the maximum path length of 50 characters
+	// valid-windows-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters: : " *
 	// starts-with-alpha says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" starts with a non-alphabetic character
 	// valid-dsc-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters: *
-	// valid-windows-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters: : " *
 }
 
 // This example skips valid-dsc-filename in order to let restrictive-naming

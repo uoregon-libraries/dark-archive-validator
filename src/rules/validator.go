@@ -4,6 +4,18 @@ import (
 	"os"
 )
 
+// Criticality defines how important a validator is
+type Criticality int
+
+// Criticalities, sorted such that low-importance items have a higher number to
+// ensure they're sorted after high-importance items.  Normal is explicitly set
+// to zero since that's the int default.
+const (
+	CHigh   Criticality = -1
+	CNormal Criticality = 0
+	CLow    Criticality = 1
+)
+
 // ValidatorFunc is the function called by a validator to determine if a path
 // is invalid in any way
 type ValidatorFunc func(path string, info os.FileInfo) error
@@ -19,9 +31,10 @@ type ValidatorFunc func(path string, info os.FileInfo) error
 // set to true if this validator is expected to tell enough information that
 // further validations are going to just confuse the report.
 type Validator struct {
-	Name     string
-	vf       ValidatorFunc
-	priority int8
+	Name        string
+	vf          ValidatorFunc
+	priority    int8
+	criticality Criticality
 
 	// skipOnPreviousFailures flags a validator not to run if there were previous failures
 	skipOnPreviousFailures bool
@@ -58,14 +71,20 @@ type ValidatorList []Validator
 func (vl ValidatorList) Len() int      { return len(vl) }
 func (vl ValidatorList) Swap(i, j int) { vl[i], vl[j] = vl[j], vl[i] }
 
-// Less is defined as having a numerically lower priority - or equal priority
-// but alphabetically earlier name
+// i is less than j if i is prioritized earlier (numerically lower priority).
+// If both have the same priority, criticality is then considered, which VLHigh
+// being sorted first, etc.  If priority and criticality are the same, sorting
+// is alphabetic by name.
 func (vl ValidatorList) Less(i, j int) bool {
-	if vl[i].priority == vl[j].priority {
-		return vl[i].Name < vl[j].Name
+	if vl[i].priority != vl[j].priority {
+		return vl[i].priority < vl[j].priority
 	}
 
-	return vl[i].priority < vl[j].priority
+	if vl[i].criticality != vl[j].criticality {
+		return vl[i].criticality < vl[j].criticality
+	}
+
+	return vl[i].Name < vl[j].Name
 }
 
 // validators holds all known validators
@@ -75,16 +94,26 @@ func register(v Validator) {
 	validators = append(validators, v)
 }
 
-// RegisterValidator creates a simple validator with default priority and no
-// skipping on failure, then puts it in the validator list
+// RegisterValidator creates a simple validator with default criticality and
+// priority, and no skipping on failure, then puts it in the validator list
 func RegisterValidator(name string, validate ValidatorFunc) {
 	register(Validator{Name: name, vf: validate})
 }
 
+// RegisterValidatorHigh registers a high-criticality validator
+func RegisterValidatorHigh(name string, validate ValidatorFunc) {
+	register(Validator{Name: name, vf: validate, criticality: CHigh})
+}
+
+// RegisterValidatorLow registers a low-criticality validator
+func RegisterValidatorLow(name string, validate ValidatorFunc) {
+	register(Validator{Name: name, vf: validate, criticality: CLow})
+}
+
 // RegisterCustomValidator creates a validator with explicitly set values for
 // priority and failure modes, and puts that in the validator list
-func RegisterCustomValidator(name string, validate ValidatorFunc, priority int8, skipOnPreviousFailures, stopOnFailure bool) {
-	register(Validator{name, validate, priority, skipOnPreviousFailures, stopOnFailure})
+func RegisterCustomValidator(name string, validate ValidatorFunc, c Criticality, priority int8, skipOnPreviousFailures, stopOnFailure bool) {
+	register(Validator{name, validate, priority, c, skipOnPreviousFailures, stopOnFailure})
 }
 
 // NukeValidatorList erases all entries from the list of known validators.

@@ -7,7 +7,7 @@ import (
 )
 
 func init() {
-	RegisterCustomValidator("no-extraneous-files", NoExtraneousFiles, -100, false, true)
+	RegisterCustomValidator("no-extraneous-files", NoExtraneousFiles, CNormal, -100, false, true)
 }
 
 // NoExtraneousFiles validates a variety of file patterns to ensure various

@@ -13,7 +13,7 @@ import (
 
 func init() {
 	RegisterValidator("no-utf8", NoUTF8)
-	RegisterValidator("invalid-utf8", InvalidUTF8)
+	RegisterValidatorHigh("invalid-utf8", InvalidUTF8)
 }
 
 // runeListErrorString converts a list of runes into a useful string for

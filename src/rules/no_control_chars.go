@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	RegisterValidator("no-control-chars", NoControlChars)
+	RegisterValidatorHigh("no-control-chars", NoControlChars)
 }
 
 // NoControlChars rejects files that use anything below ASCII space, or the
