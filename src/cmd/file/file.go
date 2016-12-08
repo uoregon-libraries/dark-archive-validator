@@ -1,5 +1,5 @@
-// file.go is a simple example to verify that the forked magicmime package is
-// doing what I want.  It is not meant as a replacement of the file command.
+// file.go is a simple example to verify that the magicmime package is doing
+// what I want.  It is not meant as a replacement of the file command.
 
 package main
 
