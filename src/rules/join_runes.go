@@ -5,7 +5,7 @@ func joinRunes(rList []rune) string {
 	var out string
 	for i, r := range rList {
 		out += string(r)
-		if i != len(rList) - 1 {
+		if i != len(rList)-1 {
 			out += " "
 		}
 	}
