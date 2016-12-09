@@ -14,7 +14,7 @@ import (
 
 var parser *flags.Parser
 var opts struct {
-	SkipList       []string `short:"s" long:"skip" description:"Skip a particular validator.  Cannot be used to skip Windows filename validations.  Can be repeated to skip multiple validations."`
+	SkipList       []string `short:"s" long:"skip" description:"Skip a particular validator.  Cannot be used to skip critical validations.  Can be repeated to skip multiple validations."`
 	Quick          bool     `long:"quick" description:"Skip checksum and lowest-criticality validators"`
 	ListValidators bool     `short:"l" long:"list-validators" description:"List all validators this command would have run"`
 }
