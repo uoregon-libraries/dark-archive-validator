@@ -190,8 +190,10 @@ func ExampleEngine_noSkippingCriticalValidations() {
 	}
 
 	// Output:
+	// After manually running Skip, found broken-file
 	// After manually running Skip, found no-duped-names
 	// After manually running Skip, found valid-windows-filename
+	// After SkipAll, found broken-file
 	// After SkipAll, found no-duped-names
 	// After SkipAll, found valid-windows-filename
 }
@@ -207,7 +209,8 @@ func ExampleEngine_onlyTestChecksums() {
 	var e = rules.NewEngine()
 	e.TraverseFn = fakeFileWalkChecksum
 	e.SkipAll()
-	rules.RegisterChecksumValidator("/blah", &checksum.Checksum{sha256.New(), fakeBlockWrite})
+	var chksum = make(map[string]string)
+	rules.RegisterChecksumValidator("/blah", &checksum.Checksum{sha256.New(), fakeBlockWrite}, chksum)
 	e.ValidateTree("/blah", failFunc)
 
 	// Output:
