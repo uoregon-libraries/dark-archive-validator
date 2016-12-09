@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"rules"
@@ -25,6 +26,12 @@ func main() {
 	getAllValidators()
 	engine.ValidateTree(rootPath, failfunc)
 	exportValidationFailures()
+
+	if len(fileValidationFailures) != 0 {
+		os.Exit(1)
+	}
+
+	os.Exit(0)
 }
 
 // getAllValidators puts together the complete list of validator names from a
