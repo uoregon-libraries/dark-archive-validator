@@ -6,12 +6,6 @@
 			"repository": "https://github.com/jessevdk/go-flags",
 			"revision": "8bc97d602c3bfeb5fc6fc9b5a9c898f245495637",
 			"branch": "master"
-		},
-		{
-			"importpath": "github.com/rakyll/magicmime",
-			"repository": "https://github.com/rakyll/magicmime",
-			"revision": "2b8b8f91948c4307f40a8f86ac6f3b26e27b7389",
-			"branch": "master"
 		}
 	]
 }
