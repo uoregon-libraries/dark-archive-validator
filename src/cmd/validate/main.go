@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"sort"
 	"strings"
 
 	"rules"
@@ -19,6 +21,7 @@ var rootPath string
 var allValidatorNames []string
 var validatorNameIndices = make(map[string]int)
 var fileValidationFailures = make([]FileValidationFailure, 0)
+var checksums = make(map[string]string)
 
 func main() {
 	engine = rules.NewEngine()
@@ -26,6 +29,10 @@ func main() {
 	getAllValidators()
 	engine.ValidateTree(rootPath, failfunc)
 	exportValidationFailures()
+
+	if opts.SHAOutput != "" {
+		writeSha()
+	}
 
 	if len(fileValidationFailures) != 0 {
 		os.Exit(1)
@@ -76,4 +83,23 @@ func exportValidationFailures() {
 // printTSV just prints the strings in cols as-is, tab-separated
 func printTSV(cols []string) {
 	fmt.Println(strings.Join(cols, "\t"))
+}
+
+func writeSha() {
+	var lines = make([]string, 0)
+	for sha, filename := range checksums {
+		lines = append(lines, fmt.Sprintf("%s  %s", sha, filename))
+	}
+	sort.Strings(lines)
+
+	var f, err = os.Create(opts.SHAOutput)
+	if err == nil {
+		_, err = f.WriteString(strings.Join(lines, "\n"))
+	}
+
+	if err != nil {
+		log.Fatalf("Unable to write SHA checksums: %s", err)
+	}
+
+	f.Close()
 }

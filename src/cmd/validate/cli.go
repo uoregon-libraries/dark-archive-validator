@@ -17,6 +17,7 @@ var opts struct {
 	SkipList       []string `short:"s" long:"skip" description:"Skip a particular validator.  Cannot be used to skip critical validations.  Can be repeated to skip multiple validations."`
 	Quick          bool     `long:"quick" description:"Skip checksum and lowest-criticality validators"`
 	ListValidators bool     `short:"l" long:"list-validators" description:"List all validators this command would have run"`
+	SHAOutput      string   `short:"o" long:"sha-output" description:"Filename for writing all files' SHA256 hashes"`
 }
 
 func usage(err error) {
@@ -71,11 +72,22 @@ func processCLI() {
 	if len(more) > 0 {
 		rootPath = more[0]
 	}
-	rules.RegisterChecksumValidator(rootPath, checksum.New(sha256.New()))
+	rules.RegisterChecksumValidator(rootPath, checksum.New(sha256.New()), checksums)
+
+	if opts.SHAOutput != "" {
+		// Make sure the given file can be created and written
+		var _, err = os.OpenFile(opts.SHAOutput, os.O_RDWR|os.O_CREATE, 0666)
+		if err != nil {
+			usage(fmt.Errorf("Unable to write to %s", opts.SHAOutput))
+		}
+	}
 
 	// --quick skips non-critical validators and the very slow checksumming
 	// validator
 	if opts.Quick {
+		if opts.SHAOutput != "" {
+			usage(fmt.Errorf("Cannot combine --quick and --sha-output"))
+		}
 		skipUnimportantValidators()
 		opts.SkipList = append(opts.SkipList, "no-duped-content")
 	}

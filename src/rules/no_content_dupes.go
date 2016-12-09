@@ -11,14 +11,11 @@ import (
 
 // RegisterChecksumValidator is trickier than most validators - this validator
 // needs a full path as context since validators only get the path relative to
-// the root.  This thing also has to have a checksummer in the first place.
-// And, of course, it needs to set up a checksum variable to compare against.
-// And since checksumming is optional, we don't want to auto-register any
-// particular checksum validator.  So this function gets all that context,
-// builds a validator function closure and registers it.
-func RegisterChecksumValidator(root string, c *checksum.Checksum) {
-	var checksums = make(map[string]string)
-
+// the root.  This thing also has to have a checksummer and a map to store
+// checksums in the first place.  And since checksumming is optional, we don't
+// want to auto-register any particular checksum validator.  So this function
+// gets all that context, builds a validator function closure and registers it.
+func RegisterChecksumValidator(root string, c *checksum.Checksum, checksums map[string]string) {
 	var validateChecksum = func(path string, info os.FileInfo) error {
 		// Don't try to checksum non-files
 		if !info.Mode().IsRegular() {
