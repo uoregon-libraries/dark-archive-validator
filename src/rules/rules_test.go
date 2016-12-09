@@ -66,8 +66,8 @@ func fakeFileWalk(root string, walkfn filepath.WalkFunc) error {
 	walk("", rules.NewFakeFile(".DS_Store", 1024))
 	walk("", rules.NewFakeFile("._foo.txt", 1024))
 	// Windows garbage
-	walk("", rules.NewFakeFile("Thumbs.DB", 1024))
-	walk("", rules.NewFakeFile("dEsktoP.Ini", 1024))
+	walk("", rules.NewFakeFile("Thumbs.db", 1024))
+	walk("", rules.NewFakeFile("desktop.ini", 1024))
 
 	// Multiple problems: bad characters for windows, bad characters for our own
 	// sanity, too long a path, device file
@@ -145,10 +145,10 @@ func ExampleEngine() {
 	// starts-with-alpha says ".hiddendir" starts with a non-alphabetic character
 	// no-utf8 says "foo‣‡•.txt" contains unicode characters ("‣", "‡", "•")
 	// invalid-utf8 says "foo\xed\x88.txt" contains invalid unicode
-	// no-extraneous-files says ".DS_Store" is an extraneous file and should be deleted
-	// no-extraneous-files says "._foo.txt" is an extraneous file and should be deleted
-	// no-extraneous-files says "Thumbs.DB" is an extraneous file and should be deleted
-	// no-extraneous-files says "dEsktoP.Ini" is an extraneous file and should be deleted
+	// no-extraneous-files says ".DS_Store" may be an extraneous file; consider deletion
+	// no-extraneous-files says "._foo.txt" may be an extraneous file; consider deletion
+	// no-extraneous-files says "Thumbs.db" may be an extraneous file; consider deletion
+	// no-extraneous-files says "desktop.ini" may be an extraneous file; consider deletion
 	// valid-windows-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters: : " *
 	// no-control-chars says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains one or more control characters
 	// no-special-files says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" is a device file

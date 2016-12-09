@@ -3,7 +3,6 @@ package rules
 import (
 	"fmt"
 	"os"
-	"strings"
 )
 
 func init() {
@@ -13,10 +12,10 @@ func init() {
 // NoExtraneousFiles validates a variety of file patterns to ensure various
 // unnecessary file types aren't included, such as Thumbs.db, .DS_Store, etc.
 func NoExtraneousFiles(path string, info os.FileInfo) error {
-	var n = strings.ToUpper(info.Name())
-	var genericError = fmt.Errorf("is an extraneous file and should be deleted")
+	var n = info.Name()
+	var genericError = fmt.Errorf("may be an extraneous file; consider deletion")
 
-	if n == ".DS_STORE" || n == "THUMBS.DB" || n == "DESKTOP.INI" {
+	if n == ".DS_Store" || n == "Thumbs.db" || n == "desktop.ini" {
 		return genericError
 	}
 
