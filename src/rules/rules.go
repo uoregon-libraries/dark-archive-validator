@@ -1,7 +1,7 @@
 package rules
 
 import (
-	"log"
+	"fmt"
 	"os"
 	"path/filepath"
 	"sort"
@@ -13,6 +13,19 @@ import (
 type Failure struct {
 	V Validator
 	E error
+}
+
+// badFileValidator is a hard-coded validator with no function just for
+// reporting when a file can't be processed by the walk function
+var badFileValidator = Validator{
+	Name: "broken-file",
+	priority: -128,
+	vf: nil,
+	Criticality: CCritical,
+}
+
+func init() {
+	register(badFileValidator)
 }
 
 // Engine is the rules runner.  By default it will run all known validators
@@ -72,8 +85,13 @@ func (e *Engine) SkipAll() {
 func (e *Engine) ValidateTree(root string, failFunc func(string, []Failure)) {
 	root = filepath.Clean(root)
 	e.TraverseFn(root, func(path string, info os.FileInfo, err error) error {
+		var basepath = strings.Replace(path, root+"/", "", -1)
+
 		if err != nil {
-			log.Fatalf("CRITICAL - Unable to process %#v: %s", path, err)
+			var fl = make([]Failure, 1)
+			fl[0] = Failure{V: badFileValidator, E: fmt.Errorf("critical error: %s", err)}
+			failFunc(basepath, fl)
+			return nil
 		}
 
 		// The root filename doesn't matter, since our goal is to validate the
@@ -82,7 +100,6 @@ func (e *Engine) ValidateTree(root string, failFunc func(string, []Failure)) {
 			return nil
 		}
 
-		var basepath = strings.Replace(path, root+"/", "", -1)
 		var fl = e.Validate(path, basepath, info)
 		if len(fl) > 0 {
 			failFunc(basepath, fl)

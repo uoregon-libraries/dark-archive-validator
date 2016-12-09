@@ -62,6 +62,11 @@ type Validator struct {
 // Validate checks for errors in the validator function and returns the
 // (potentially updated) failure list
 func (v Validator) Validate(path string, info os.FileInfo, fList []Failure) []Failure {
+	// Allow for placeholder validators
+	if v.vf == nil {
+		return fList
+	}
+
 	var l = len(fList)
 	// If this validator isn't supposed to report already-failed items, break out
 	// now if there are existing failures
