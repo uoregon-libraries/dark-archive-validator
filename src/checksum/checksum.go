@@ -35,12 +35,10 @@ func defaultBlockWrite(path string, w io.Writer) error {
 	}
 	defer f.Close()
 
-	var bytes = make([]byte, 8192)
-	for ; err == nil; _, err = f.Read(bytes) {
-		w.Write(bytes)
-		if err != nil {
-			return err
-		}
+	_, err = io.Copy(w, f)
+	if err != nil {
+		return err
 	}
+
 	return nil
 }
