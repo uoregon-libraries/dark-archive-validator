@@ -2,7 +2,6 @@ package rules
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"sort"
@@ -84,17 +83,11 @@ func (e *Engine) SkipAll() {
 // registered validators, yielding to failFunc whenever a validation against a
 // file returns any errors
 func (e *Engine) ValidateTree(root string, failFunc func(string, []Failure)) {
-	if root[len(root)-1] != filepath.Separator {
-		root += string(filepath.Separator)
-	}
-	var err error
-	root, err = filepath.Abs(root)
-	if err != nil {
-		log.Fatalf("Unable to read path %#v: %s", root, err)
-	}
-
 	e.TraverseFn(root, func(path string, info os.FileInfo, err error) error {
 		var basepath = strings.Replace(path, root, "", 1)
+		if len(basepath) > 0 && basepath[0] == filepath.Separator {
+			basepath = basepath[1:]
+		}
 
 		if err != nil {
 			var fl = make([]Failure, 1)

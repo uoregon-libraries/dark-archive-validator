@@ -3,7 +3,9 @@ package main
 import (
 	"crypto/sha256"
 	"fmt"
+	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"checksum"
@@ -32,6 +34,20 @@ func usage(err error) {
 
 	parser.WriteHelp(os.Stderr)
 	os.Exit(status)
+}
+
+func getRootPath(p string) {
+	rootPath = p
+	// We have this on top to account for "H:" turning into "H:.\\" if we just
+	// run Clean directly
+	if rootPath[len(rootPath)-1] != filepath.Separator {
+		rootPath += string(filepath.Separator)
+	}
+	var err error
+	rootPath, err = filepath.Abs(rootPath)
+	if err != nil {
+		log.Fatalf("Unable to read path %#v: %s", rootPath, err)
+	}
 }
 
 func listValidatorsAndExit() {
@@ -70,7 +86,7 @@ func processCLI() {
 	}
 
 	if len(more) > 0 {
-		rootPath = more[0]
+		getRootPath(more[0])
 	}
 	rules.RegisterChecksumValidator(rootPath, checksum.New(sha256.New()), checksums)
 
