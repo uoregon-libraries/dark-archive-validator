@@ -18,9 +18,9 @@ type Failure struct {
 // badFileValidator is a hard-coded validator with no function just for
 // reporting when a file can't be processed by the walk function
 var badFileValidator = Validator{
-	Name: "broken-file",
-	priority: -128,
-	vf: nil,
+	Name:        "broken-file",
+	priority:    -128,
+	vf:          nil,
 	Criticality: CCritical,
 }
 
