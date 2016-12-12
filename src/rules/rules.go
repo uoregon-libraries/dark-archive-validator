@@ -100,7 +100,7 @@ func (e *Engine) ValidateTree(root string, failFunc func(string, []Failure)) {
 			return nil
 		}
 
-		var fl = e.Validate(path, basepath, info)
+		var fl = e.Validate(basepath, info)
 		if len(fl) > 0 {
 			failFunc(basepath, fl)
 		}
@@ -130,7 +130,7 @@ func (e *Engine) Validators() ValidatorList {
 
 // Validate checks the given base path against all validators not in the skip
 // list, and returns an array of errors found
-func (e *Engine) Validate(path, basepath string, info os.FileInfo) []Failure {
+func (e *Engine) Validate(basepath string, info os.FileInfo) []Failure {
 	var flist []Failure
 
 	var v Validator
