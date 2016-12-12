@@ -73,7 +73,7 @@ func (e *Engine) Unskip(name string) bool {
 
 // SkipAll is to be used solely when manually setting up (via Unskip)
 // individual validators for precise use-cases.  As with Skip(), this will not
-// remove the Windows filename restriction validator.
+// remove the critical validators.
 func (e *Engine) SkipAll() {
 	for _, v := range validators {
 		e.Skip(v.Name)
