@@ -85,7 +85,7 @@ func (e *Engine) SkipAll() {
 func (e *Engine) ValidateTree(root string, failFunc func(string, []Failure)) {
 	root = filepath.Clean(root)
 	e.TraverseFn(root, func(path string, info os.FileInfo, err error) error {
-		var basepath = strings.Replace(path, root, "", -1)
+		var basepath = strings.Replace(path, root, "", 1)
 		if basepath[0] == filepath.Separator {
 			basepath = basepath[1:]
 		}
