@@ -14,8 +14,8 @@ type Checksum struct {
 	BlockWrite func(path string, w io.Writer) error
 }
 
-// New returns a new Checksum using the default block write method, which reads
-// the file in 8k blocks and writes those out to the hash writer
+// New returns a new Checksum using the default block write method, which just
+// uses io.Copy to send a stream of bytes from the file into the hash
 func New(h hash.Hash) *Checksum {
 	return &Checksum{h, defaultBlockWrite}
 }
