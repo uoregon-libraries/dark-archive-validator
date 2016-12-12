@@ -83,12 +83,13 @@ func (e *Engine) SkipAll() {
 // registered validators, yielding to failFunc whenever a validation against a
 // file returns any errors
 func (e *Engine) ValidateTree(root string, failFunc func(string, []Failure)) {
+	if root[len(root)-1] != filepath.Separator {
+		root += string(filepath.Separator)
+	}
 	root = filepath.Clean(root)
+
 	e.TraverseFn(root, func(path string, info os.FileInfo, err error) error {
 		var basepath = strings.Replace(path, root, "", 1)
-		if basepath[0] == filepath.Separator {
-			basepath = basepath[1:]
-		}
 
 		if err != nil {
 			var fl = make([]Failure, 1)
