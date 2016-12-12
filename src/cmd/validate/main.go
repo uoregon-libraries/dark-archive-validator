@@ -21,7 +21,7 @@ var rootPath string
 var allValidatorNames []string
 var validatorNameIndices = make(map[string]int)
 var fileValidationFailures = make([]FileValidationFailure, 0)
-var checksums = make(map[string]string)
+var checksums = make(map[string][]string)
 
 func main() {
 	engine = rules.NewEngine()
@@ -87,8 +87,10 @@ func printTSV(cols []string) {
 
 func writeSha() {
 	var lines = make([]string, 0)
-	for sha, filename := range checksums {
-		lines = append(lines, fmt.Sprintf("%s  %s", sha, filename))
+	for sha, filenames := range checksums {
+		for _, filename := range filenames {
+			lines = append(lines, fmt.Sprintf("%s  %s", sha, filename))
+		}
 	}
 	sort.Strings(lines)
 

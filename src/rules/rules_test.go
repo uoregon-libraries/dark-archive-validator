@@ -209,7 +209,7 @@ func ExampleEngine_onlyTestChecksums() {
 	var e = rules.NewEngine()
 	e.TraverseFn = fakeFileWalkChecksum
 	e.SkipAll()
-	var chksum = make(map[string]string)
+	var chksum = make(map[string][]string)
 	rules.RegisterChecksumValidator("/blah", &checksum.Checksum{sha256.New(), fakeBlockWrite}, chksum)
 	e.ValidateTree("/blah", failFunc)
 

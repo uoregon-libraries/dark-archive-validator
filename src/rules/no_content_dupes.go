@@ -15,25 +15,27 @@ import (
 // checksums in the first place.  And since checksumming is optional, we don't
 // want to auto-register any particular checksum validator.  So this function
 // gets all that context, builds a validator function closure and registers it.
-func RegisterChecksumValidator(root string, c *checksum.Checksum, checksums map[string]string) {
+func RegisterChecksumValidator(root string, c *checksum.Checksum, checksums map[string][]string) {
 	var validateChecksum = func(path string, info os.FileInfo) error {
 		// Don't try to checksum non-files
 		if !info.Mode().IsRegular() {
 			return nil
 		}
 
-		var sum, err = c.Sum(filepath.Join(root, path))
+		var fullPath = filepath.Join(root, path)
+		var sum, err = c.Sum(fullPath)
 		if err != nil && err != io.EOF {
 			return fmt.Errorf("isn't able to be checksummed (%s)", err)
 		}
 
 		var chksum = fmt.Sprintf("%x", sum)
-		if _, exists := checksums[chksum]; exists {
-			return fmt.Errorf("duplicates the content of %#v", checksums[chksum])
+		var chksumExist = checksums[chksum]
+		if len(chksumExist) != 0 {
+			err = fmt.Errorf("duplicates the content of %#v", checksums[chksum][0])
 		}
 
-		checksums[chksum] = path
-		return nil
+		checksums[chksum] = append(checksums[chksum], fullPath)
+		return err
 	}
 	RegisterValidatorHigh("no-duped-content", validateChecksum)
 }
