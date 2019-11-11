@@ -8,10 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"checksum"
-	"rules"
-
 	"github.com/jessevdk/go-flags"
+	"github.com/uoregon-libraries/dark-archive-validator/src/checksum"
+	"github.com/uoregon-libraries/dark-archive-validator/src/rules"
 )
 
 var parser *flags.Parser

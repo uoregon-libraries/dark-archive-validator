@@ -7,7 +7,7 @@ import (
 	"sort"
 	"strings"
 
-	"rules"
+	"github.com/uoregon-libraries/dark-archive-validator/src/rules"
 )
 
 // FileValidationFailure combines path and failure list

@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"checksum"
-	"rules"
+	"github.com/uoregon-libraries/dark-archive-validator/src/checksum"
+	"github.com/uoregon-libraries/dark-archive-validator/src/rules"
 )
 
 // fakeFileWalk fires off the walkfn on a variety of paths to test out most of
