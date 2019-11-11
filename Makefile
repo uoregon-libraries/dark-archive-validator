@@ -12,7 +12,6 @@ deps:
 # and still have a little bit of the vetting without running the entire
 # validation script
 bin/%: src/cmd/% $(SOURCES) $(SOURCEDIRS)
-	golint -set_exit_status $</...
 	go vet ./$<
 	go build -ldflags="-s -w" -o $@ github.com/uoregon-libraries/dark-archive-validator/$<
 
@@ -23,7 +22,7 @@ clean:
 	rm -rf bin/
 
 lint:
-	gometalinter --disable gotype --deadline 10s src/...
+	golint -set_exit_status src/...
 
 fmt:
 	find src -name "*.go" -exec gofmt -l -w -s {} \;
