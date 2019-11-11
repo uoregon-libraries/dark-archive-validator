@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"checksum"
+	"github.com/uoregon-libraries/dark-archive-validator/src/checksum"
 )
 
 // RegisterChecksumValidator is trickier than most validators - this validator
