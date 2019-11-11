@@ -123,38 +123,38 @@ func ExampleEngine() {
 	e.ValidateTree("/this/path/shouldn't/actually/have/any/kind/of/testing/so I can do *all kinds* of bad things in here!\x1b\x1b/", failFunc)
 
 	// Output:
-	// no-special-files says "/flarb" is a symbolic link
-	// valid-windows-filename says "/lPt2.dir" uses a reserved file name
-	// no-duped-names says "/lPt2.dir/fILe.txt" is a duplicate of "/lPt2.dir/file.txt"
-	// nonzero-filesize says "/lPt2.dir/zerofile.txt" is an empty file
-	// has-extension says "/lPt2.dir/fILe" doesn't have an extension
-	// no-spaces says "/this isbad.txt" has a space in the filename
-	// valid-windows-filename says "/thisisbad.txt " has a trailing space
-	// no-spaces says "/thisisbad.txt " ends with a space
-	// no-spaces says "/this\u202fisbad.txt" has a space in the filename
-	// no-utf8 says "/this\u202fisbad.txt" contains unicode characters (" ")
-	// no-spaces says "/thisisbad.txt\u202f" ends with a space
-	// no-utf8 says "/thisisbad.txt\u202f" contains unicode characters (" ")
-	// starts-with-alpha says "/0.txt" starts with a non-alphabetic character
-	// valid-dsc-filename says "/abc@foo.bar" contains invalid characters: @
-	// has-only-one-period says "/foo.bar.txt" has 2 periods (maximum is 1)
-	// has-only-one-period says "/foo.bar.dir" has 2 periods (maximum is 1)
-	// no-hidden-files says "/.hiddenfile" is hidden (starts with a period)
-	// starts-with-alpha says "/.hiddenfile" starts with a non-alphabetic character
-	// no-hidden-files says "/.hiddendir" is hidden (starts with a period)
-	// starts-with-alpha says "/.hiddendir" starts with a non-alphabetic character
-	// no-utf8 says "/foo‣‡•.txt" contains unicode characters ("‣", "‡", "•")
-	// invalid-utf8 says "/foo\xed\x88.txt" contains invalid unicode
-	// no-extraneous-files says "/.DS_Store" may be an extraneous file; consider deletion
-	// no-extraneous-files says "/._foo.txt" may be an extraneous file; consider deletion
-	// no-extraneous-files says "/Thumbs.db" may be an extraneous file; consider deletion
-	// no-extraneous-files says "/desktop.ini" may be an extraneous file; consider deletion
-	// valid-windows-filename says "/blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters: : " *
-	// no-control-chars says "/blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains one or more control characters
-	// no-special-files says "/blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" is a device file
-	// path-limit says "/blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" exceeds the maximum path length of 50 characters
-	// starts-with-alpha says "/blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" starts with a non-alphabetic character
-	// valid-dsc-filename says "/blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters: *
+	// no-special-files says "flarb" is a symbolic link
+	// valid-windows-filename says "lPt2.dir" uses a reserved file name
+	// no-duped-names says "lPt2.dir/fILe.txt" is a duplicate of "lPt2.dir/file.txt"
+	// nonzero-filesize says "lPt2.dir/zerofile.txt" is an empty file
+	// has-extension says "lPt2.dir/fILe" doesn't have an extension
+	// no-spaces says "this isbad.txt" has a space in the filename
+	// valid-windows-filename says "thisisbad.txt " has a trailing space
+	// no-spaces says "thisisbad.txt " ends with a space
+	// no-spaces says "this\u202fisbad.txt" has a space in the filename
+	// no-utf8 says "this\u202fisbad.txt" contains unicode characters (" ")
+	// no-spaces says "thisisbad.txt\u202f" ends with a space
+	// no-utf8 says "thisisbad.txt\u202f" contains unicode characters (" ")
+	// starts-with-alpha says "0.txt" starts with a non-alphabetic character
+	// valid-dsc-filename says "abc@foo.bar" contains invalid characters: @
+	// has-only-one-period says "foo.bar.txt" has 2 periods (maximum is 1)
+	// has-only-one-period says "foo.bar.dir" has 2 periods (maximum is 1)
+	// no-hidden-files says ".hiddenfile" is hidden (starts with a period)
+	// starts-with-alpha says ".hiddenfile" starts with a non-alphabetic character
+	// no-hidden-files says ".hiddendir" is hidden (starts with a period)
+	// starts-with-alpha says ".hiddendir" starts with a non-alphabetic character
+	// no-utf8 says "foo‣‡•.txt" contains unicode characters ("‣", "‡", "•")
+	// invalid-utf8 says "foo\xed\x88.txt" contains invalid unicode
+	// no-extraneous-files says ".DS_Store" may be an extraneous file; consider deletion
+	// no-extraneous-files says "._foo.txt" may be an extraneous file; consider deletion
+	// no-extraneous-files says "Thumbs.db" may be an extraneous file; consider deletion
+	// no-extraneous-files says "desktop.ini" may be an extraneous file; consider deletion
+	// valid-windows-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters: : " *
+	// no-control-chars says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains one or more control characters
+	// no-special-files says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" is a device file
+	// path-limit says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" exceeds the maximum path length of 50 characters
+	// starts-with-alpha says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" starts with a non-alphabetic character
+	// valid-dsc-filename says "blahblahblahblahblahblahblahblahblahblah/dev/:\"thi\x05ng*" contains invalid characters: *
 }
 
 // This example skips valid-dsc-filename in order to let restrictive-naming
@@ -169,7 +169,7 @@ func ExampleEngine_skipDSCForRestrictiveTest() {
 	e.ValidateTree("/blah", failFunc)
 
 	// Output:
-	// restrictive-naming says "/abc@foo.bar" doesn't match required filename pattern
+	// restrictive-naming says "abc@foo.bar" doesn't match required filename pattern
 }
 
 // This example shows how serious we are about not skipping critical
@@ -214,5 +214,5 @@ func ExampleEngine_onlyTestChecksums() {
 	e.ValidateTree("/blah", failFunc)
 
 	// Output:
-	// no-duped-content says "/b/one.txt" duplicates the content of "/a/one.txt"
+	// no-duped-content says "b/one.txt" duplicates the content of "/blah/a/one.txt"
 }
