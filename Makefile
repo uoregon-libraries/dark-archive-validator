@@ -1,26 +1,29 @@
-.PHONY: bin clean linux64 linux32 win win32 osx test lint fmt
+.PHONY: default clean linux64 linux32 win win32 osx test lint fmt
 
-bin:
-	gb build
-linux64:
-	env GOOS=linux GOARCH=amd64 gb build
-linux32:
-	env GOOS=linux GOARCH=386 gb build
-win:
-	env GOOS=windows GOARCH=amd64 gb build
-win32:
-	env GOOS=windows GOARCH=386 gb build
-osx:
-	env GOOS=darwin GOARCH=amd64 gb build
+SOURCES := $(shell find ./src -name "*.go")
+SOURCEDIRS := $(shell find ./src -type d)
+
+default: deps bin/validate
+
+deps:
+	go mod download
+
+# For quick building of binaries, you can run something like "make bin/server"
+# and still have a little bit of the vetting without running the entire
+# validation script
+bin/%: src/cmd/% $(SOURCES) $(SOURCEDIRS)
+	golint -set_exit_status $</...
+	go vet ./$<
+	go build -ldflags="-s -w" -o $@ github.com/uoregon-libraries/dark-archive-validator/$<
 
 test:
-	gb test -v
+	go test -v ./src/...
 
 clean:
-	rm -rf pkg/ bin/
+	rm -rf bin/
 
 lint:
-	GOPATH=$(PWD) gometalinter --disable gotype --deadline 10s src/...
+	gometalinter --disable gotype --deadline 10s src/...
 
 fmt:
 	find src -name "*.go" -exec gofmt -l -w -s {} \;
